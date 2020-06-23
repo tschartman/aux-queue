@@ -1,0 +1,69 @@
+{
+  "name": "aux_queue",
+  "version": "0.0.1",
+  "description": "A Quasar Framework app",
+  "productName": "AuxQueue",
+  "author": "tim <tschartman@yahoo.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.5.0",
+    "apollo-cache-inmemory": "^1.6.5",
+    "apollo-client": "^2.6.8",
+    "apollo-link": "^1.2.13",
+    "apollo-link-context": "^1.0.19",
+    "apollo-link-http": "^1.5.16",
+    "apollo-link-ws": "^1.0.20",
+    "axios": "^0.18.1",
+    "connect-history-api-fallback": "^1.6.0",
+    "cordova": "^9.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "express": "^4.17.1",
+    "graphql": "^14.6.0",
+    "graphql-tag": "^2.10.3",
+    "js-cookie": "^2.2.1",
+    "jwt-decode": "^2.2.0",
+    "md5": "^2.2.1",
+    "moment": "^2.24.0",
+    "quasar": "^1.8.3",
+    "serve-static": "^1.14.1",
+    "subscriptions-transport-ws": "^0.9.16",
+    "v-clipboard": "^2.2.2",
+    "vue-apollo": "^3.0.3",
+    "vue-social-sharing": "^2.4.7",
+    "vue-worker": "^1.2.1",
+    "vuelidate": "^0.7.4",
+    "vuex-persistedstate": "^2.7.0"
+  },
+  "devDependencies": {
+    "@quasar/app": "^2.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^6.1.2"
+  },
+  "browserslist": [
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
+  ],
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}
