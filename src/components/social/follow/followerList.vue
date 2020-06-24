@@ -68,7 +68,7 @@
   </div>
 </template>
 <script>
-import { QImg, QAvatar, QTooltip, QExpansionItem } from "quasar";
+import { QImg, QAvatar, QTooltip, QExpansionItem } from 'quasar'
 
 export default {
   components: {
@@ -81,34 +81,34 @@ export default {
     followers: Array,
     method: { type: Function }
   },
-  data() {
+  data () {
     return {
       requested: [],
       accepted: []
-    };
+    }
   },
   watch: {
-    followers: function(updatedFollowers) {
-      this.categorizeFollowers(updatedFollowers);
+    followers: function (updatedFollowers) {
+      this.categorizeFollowers(updatedFollowers)
     }
   },
   methods: {
-    categorizeFollowers(followers) {
-      let accepted = [];
-      let requested = [];
+    categorizeFollowers (followers) {
+      const accepted = []
+      const requested = []
       followers.forEach(user => {
-        if (user.status === "pending") {
-          requested.push(user);
-        } else if (user.status === "accepted") {
-          accepted.push(user);
+        if (user.status === 'pending') {
+          requested.push(user)
+        } else if (user.status === 'accepted') {
+          accepted.push(user)
         }
-      });
-      this.accepted = accepted;
-      this.requested = requested;
+      })
+      this.accepted = accepted
+      this.requested = requested
     }
   },
-  created() {
-    this.categorizeFollowers(this.followers);
+  created () {
+    this.categorizeFollowers(this.followers)
   }
-};
+}
 </script>

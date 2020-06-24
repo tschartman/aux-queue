@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import { QAvatar, QItem } from "quasar";
+import { QAvatar, QItem } from 'quasar'
 export default {
   components: {
     QAvatar,
@@ -34,9 +34,9 @@ export default {
   props: {
     user: Object
   },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   methods: {}
-};
+}
 </script>

@@ -7,7 +7,6 @@
       label="Search"
       use-input
       hide-selected
-      fill-input
       input-debounce="0"
       :options="filterOptions"
       @filter="filterFn"
@@ -133,14 +132,12 @@
           </div>
         </div>
       </div>
-      <h5 v-else>Place Holder</h5>
-      <q-separator />
     </div>
   </div>
 </template>
 <script>
-import { QSelect, QImg, QSeparator, QMenu } from "quasar";
-import { GET_USERS_QUERY } from "src/graphql/queries/userQueries";
+import { QSelect, QImg, QMenu } from 'quasar'
+import { GET_USERS_QUERY } from 'src/graphql/queries/userQueries'
 import {
   GET_FOLLOWING_QUERY,
   GET_FOLLOWERS_QUERY,
@@ -150,9 +147,9 @@ import {
   UPDATE_FOLLOWER_MUTATION,
   REMOVE_FOLLOW_MUTATION,
   REMOVE_FOLLOWER_MUTATION
-} from "src/graphql/queries/followerQueries";
-import userView from "src/components/user/userView";
-const statusList = ["pending", "accepted", "declined", "blocked"];
+} from 'src/graphql/queries/followerQueries'
+import userView from 'src/components/social/users/userView'
+const statusList = ['pending', 'accepted', 'declined', 'blocked']
 export default {
   props: {
     user: Object,
@@ -161,235 +158,234 @@ export default {
   components: {
     QSelect,
     QImg,
-    QSeparator,
     QMenu,
     userView
   },
-  data() {
+  data () {
     return {
       friends: [],
       options: [],
       filterOptions: [],
       friend: null
-    };
+    }
   },
   watch: {
     selectedFriend: {
       immediate: true,
       deep: true,
-      async handler(selectedFriend) {
+      async handler (selectedFriend) {
         if (selectedFriend.friend) {
-          this.selectUser(selectedFriend.friend);
+          this.selectUser(selectedFriend.friend)
         }
       }
     }
   },
   methods: {
-    async selectUser(user) {
-      this.friend = user;
-      const followingStatus = await this.findFollowingStatus(user.userName);
-      const followerStatus = await this.findFollowerStatus(user.userName);
-      this.$set(this.friend, "followingStatus", followingStatus);
-      this.$set(this.friend, "followerStatus", followerStatus);
+    async selectUser (user) {
+      this.friend = user
+      const followingStatus = await this.findFollowingStatus(user.userName)
+      const followerStatus = await this.findFollowerStatus(user.userName)
+      this.$set(this.friend, 'followingStatus', followingStatus)
+      this.$set(this.friend, 'followerStatus', followerStatus)
     },
-    async findFollowingStatus(userName) {
+    async findFollowingStatus (userName) {
       const followingData = await this.$apollo.query({
         query: GET_FOLLOWING_QUERY
-      });
-      let found = followingData.data.following.find(
+      })
+      const found = followingData.data.following.find(
         f => f.following.userName === userName
-      );
+      )
       if (found) {
-        return statusList[found.status];
+        return statusList[found.status]
       }
-      return "none";
+      return 'none'
     },
-    async findFollowerStatus(userName) {
+    async findFollowerStatus (userName) {
       const followerData = await this.$apollo.query({
         query: GET_FOLLOWERS_QUERY
-      });
-      let found = followerData.data.followers.find(
+      })
+      const found = followerData.data.followers.find(
         f => f.follower.userName === userName
-      );
+      )
       if (found) {
-        return statusList[found.status];
+        return statusList[found.status]
       }
-      return "none";
+      return 'none'
     },
-    updateFollowerCache(status) {
+    updateFollowerCache (status) {
       const followersData = this.$apollo
         .getClient()
-        .readQuery({ query: GET_FOLLOWERS_QUERY });
-      let followers = {};
-      if (status === "none") {
+        .readQuery({ query: GET_FOLLOWERS_QUERY })
+      let followers = {}
+      if (status === 'none') {
         followers = followersData.followers
           .filter(user => {
-            return user.follower.userName !== this.friend.userName;
+            return user.follower.userName !== this.friend.userName
           })
           .map(user => {
             return {
               id: user.id,
               status: statusList.indexOf(status),
-              __typename: "RelationshipType"
-            };
-          });
+              __typename: 'RelationshipType'
+            }
+          })
       } else {
         followers = followersData.followers.map(user => {
           if (user.follower.userName === this.friend.userName) {
             return {
               id: user.id,
               status: statusList.indexOf(status),
-              __typename: "RelationshipType"
-            };
+              __typename: 'RelationshipType'
+            }
           }
           return {
             id: user.id,
             status: user.status,
-            __typename: "RelationshipType"
-          };
-        });
+            __typename: 'RelationshipType'
+          }
+        })
       }
       this.$apollo.getClient().writeQuery({
         query: SET_FOLLOWERS_QUERY,
         data: {
           followers: followers
         }
-      });
+      })
     },
-    updateFollowingCache(status) {
+    updateFollowingCache (status) {
       const followingData = this.$apollo
         .getClient()
-        .readQuery({ query: GET_FOLLOWING_QUERY });
-      let following = {};
-      if (status === "none") {
+        .readQuery({ query: GET_FOLLOWING_QUERY })
+      let following = {}
+      if (status === 'none') {
         following = followingData.following
           .filter(user => {
-            return user.following.userName !== this.friend.userName;
+            return user.following.userName !== this.friend.userName
           })
           .map(user => {
             return {
               id: user.id,
               status: user.status,
-              __typename: "RelationshipType"
-            };
-          });
+              __typename: 'RelationshipType'
+            }
+          })
       } else {
         following = followingData.following.map(user => {
           if (user.following.userName === this.friend.userName) {
             return {
               id: user.id,
               status: statusList.indexOf(status),
-              __typename: "RelationshipType"
-            };
+              __typename: 'RelationshipType'
+            }
           }
           return {
             id: user.id,
             status: user.status,
-            __typename: "RelationshipType"
-          };
-        });
+            __typename: 'RelationshipType'
+          }
+        })
       }
       this.$apollo.getClient().writeQuery({
         query: SET_FOLLOWING_QUERY,
         data: {
           following: following
         }
-      });
+      })
     },
-    async sendFollowRequest() {
+    async sendFollowRequest () {
       const follow = await this.$apollo.mutate({
         mutation: SEND_FOLLOW_MUTATION,
         variables: { userName: this.friend.userName }
-      });
+      })
       if (follow.data.sendFollowRequest.ok) {
-        this.$set(this.friend, "followingStatus", "pending");
-        this.updateFollowingCache("pending");
+        this.$set(this.friend, 'followingStatus', 'pending')
+        this.updateFollowingCache('pending')
       }
     },
-    async unFollow() {
+    async unFollow () {
       const removeFollow = await this.$apollo.mutate({
         mutation: REMOVE_FOLLOW_MUTATION,
         variables: {
           userName: this.friend.userName
         }
-      });
+      })
       if (removeFollow.data.removeFollowRequest.ok) {
-        this.$set(this.friend, "followingStatus", "none");
-        this.updateFollowingCache("none");
+        this.$set(this.friend, 'followingStatus', 'none')
+        this.updateFollowingCache('none')
       }
     },
-    async block() {
+    async block () {
       const updatedFollower = await this.$apollo.mutate({
         mutation: UPDATE_FOLLOWER_MUTATION,
         variables: {
           userName: this.friend.userName,
-          status: "blocked"
+          status: 'blocked'
         }
-      });
+      })
       if (updatedFollower.data.updateFollowerRequest.ok) {
-        this.$set(this.friend, "followerStatus", "blocked");
-        this.updateFollowerCache("blocked");
+        this.$set(this.friend, 'followerStatus', 'blocked')
+        this.updateFollowerCache('blocked')
       }
     },
-    async unBlock() {
+    async unBlock () {
       const removeFollower = await this.$apollo.mutate({
         mutation: REMOVE_FOLLOWER_MUTATION,
         variables: {
           userName: this.friend.userName
         }
-      });
+      })
       if (removeFollower.data.removeFollowerRequest.ok) {
-        this.$set(this.friend, "followerStatus", "none");
-        this.updateFollowerCache("none");
+        this.$set(this.friend, 'followerStatus', 'none')
+        this.updateFollowerCache('none')
       }
     },
-    async acceptFollower() {
+    async acceptFollower () {
       const updatedFollower = await this.$apollo.mutate({
         mutation: UPDATE_FOLLOWER_MUTATION,
         variables: {
           userName: this.friend.userName,
-          status: "accepted"
+          status: 'accepted'
         }
-      });
+      })
       if (updatedFollower.data.updateFollowerRequest.ok) {
-        this.$set(this.friend, "followerStatus", "accepted");
-        this.updateFollowerCache("accepted");
+        this.$set(this.friend, 'followerStatus', 'accepted')
+        this.updateFollowerCache('accepted')
       }
     },
-    async declineFollower() {
+    async declineFollower () {
       const removeFollower = await this.$apollo.mutate({
         mutation: REMOVE_FOLLOWER_MUTATION,
         variables: {
           userName: this.friend.userName
         }
-      });
+      })
       if (removeFollower.data.removeFollowerRequest.ok) {
-        this.$set(this.friend, "followerStatus", "none");
-        this.updateFollowerCache("none");
+        this.$set(this.friend, 'followerStatus', 'none')
+        this.updateFollowerCache('none')
       }
     },
-    filterFn(val, update, abort) {
-      if (val.length < 1 || val === "" || !val) {
-        abort();
-        return;
+    filterFn (val, update, abort) {
+      if (val.length < 1 || val === '' || !val) {
+        abort()
+        return
       }
       update(() => {
-        const needle = val.toLowerCase();
+        const needle = val.toLowerCase()
         this.filterOptions = this.options.filter(
           v => v.userName.toLowerCase().indexOf(needle) > -1
-        );
-      });
+        )
+      })
     }
   },
-  async created() {
-    let users = await this.$apollo.query({ query: GET_USERS_QUERY });
+  async created () {
+    const users = await this.$apollo.query({ query: GET_USERS_QUERY })
     this.options = users.data.users.filter(user => {
-      if (user.userName == this.user.userName) {
-        return false;
+      if (user.userName === this.user.userName) {
+        return false
       }
-      return true;
-    });
-    this.filterOptions = this.options;
+      return true
+    })
+    this.filterOptions = this.options
   }
-};
+}
 </script>

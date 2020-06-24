@@ -36,9 +36,9 @@
           <q-item-label header>Options</q-item-label>
           <div v-if="$store.getters.isLoggedIn">
             <q-item
-              :active="link === 'home'"
+              :active="page === 'home'"
               clickable
-              v-on:click="$router.push('/'), (link = 'home')"
+              v-on:click="navigate('home')"
             >
               <q-item-section avatar>
                 <q-icon name="home" />
@@ -47,12 +47,20 @@
                 <q-item-label>AuxQueue</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item>
+            <q-item :active="page === 'social'" clickable v-on:click="navigate('social')">
+              <q-item-section avatar>
+                <q-icon name="group_add" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Social</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :active="page === 'me'" clickable v-on:click="navigate('me')">
               <q-item-section avatar>
                 <q-icon name="person" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>Social</q-item-label>
+                <q-item-label>Profile</q-item-label>
               </q-item-section>
             </q-item>
             <q-separator />
@@ -109,7 +117,7 @@ export default {
   },
   data () {
     return {
-      link: 'home',
+      page: 'home',
       leftDrawerOpen: false,
       playlists: [],
       model: null,
@@ -122,6 +130,17 @@ export default {
     async logout () {
       await this.$store.dispatch('logout')
       this.$router.push('/login')
+    },
+    navigate (page) {
+      if (this.page === page) {
+        this.leftDrawerOpen = false
+      } else if (page === 'home') {
+        this.page = page
+        this.$router.push('/')
+      } else {
+        this.page = page
+        this.$router.push(page)
+      }
     },
     redirect () {
       window.location = 'https://auxstack.herokuapp.com/spotify/'

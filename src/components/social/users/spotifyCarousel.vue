@@ -81,8 +81,8 @@
   </div>
 </template>
 <script>
-import { spotifyApi } from "src/utils/spotify-api";
-import { QCarousel, QCarouselSlide, QImg } from "quasar";
+import { spotifyApi } from 'src/utils/spotify-api'
+import { QCarousel, QCarouselSlide, QImg } from 'quasar'
 
 export default {
   components: {
@@ -90,41 +90,40 @@ export default {
     QCarouselSlide,
     QImg
   },
-  data() {
+  data () {
     return {
-      modal: "",
+      modal: '',
       slide: 1,
       user: {},
-      category: "Artists",
+      category: 'Artists',
       artistMatrix: [],
       friends: [],
-      imageUrl: "",
+      imageUrl: '',
       friend: null,
       options: [],
-      tab: "social",
+      tab: 'social',
       splitterModel: 20,
       edit: false
-    };
+    }
   },
   computed: {},
   methods: {
-    splitArray(array) {
-      let templist = [];
-      let i,
-        j,
-        chunk = 4;
+    splitArray (array) {
+      const templist = []
+      let i, j = 4
+      const chunk = 4
       for (i = 0, j = array.length; i < j; i += chunk) {
-        templist.push({ row: array.slice(i, i + chunk) });
+        templist.push({ row: array.slice(i, i + chunk) })
       }
-      return templist;
+      return templist
     }
   },
 
-  async created() {
-    const artists = await spotifyApi.get("/me/top/artists");
-    const tracks = await spotifyApi.get("/me/top/tracks");
-    this.artistMatrix = this.splitArray(artists.data.items);
-    this.trackMatrix = this.splitArray(tracks.data.items);
+  async created () {
+    const artists = await spotifyApi.get('/me/top/artists')
+    const tracks = await spotifyApi.get('/me/top/tracks')
+    this.artistMatrix = this.splitArray(artists.data.items)
+    this.trackMatrix = this.splitArray(tracks.data.items)
   }
-};
+}
 </script>

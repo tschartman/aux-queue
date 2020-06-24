@@ -31,11 +31,11 @@ import {
   GET_FOLLOWING_QUERY,
   UPDATE_FOLLOWER_MUTATION,
   REMOVE_FOLLOWER_MUTATION
-} from "src/graphql/queries/followerQueries";
-import { QTabs, QTab, QTabPanel, QTabPanels, QSeparator } from "quasar";
-import followerList from "src/components/following/followerList";
-import followingList from "src/components/following/followingList";
-const statusList = ["pending", "accepted", "declined", "blocked"];
+} from 'src/graphql/queries/followerQueries'
+import { QTabs, QTab, QTabPanel, QTabPanels, QSeparator } from 'quasar'
+import followerList from 'src/components/social/follow/followerList'
+import followingList from 'src/components/social/follow/followingList'
+const statusList = ['pending', 'accepted', 'declined', 'blocked']
 export default {
   props: {
     method: { type: Function }
@@ -49,32 +49,32 @@ export default {
     followerList,
     followingList
   },
-  data() {
+  data () {
     return {
-      tab: "following",
+      tab: 'following',
       following: [],
       followers: []
-    };
+    }
   },
   methods: {
-    selectUser(user) {
-      this.$emit("selectUser", user);
+    selectUser (user) {
+      this.$emit('selectUser', user)
     },
-    async updateFollow(status, userName) {
-      let updatedFollowers = this.followers.slice(0);
+    async updateFollow (status, userName) {
+      const updatedFollowers = this.followers.slice(0)
       const followerIndex = updatedFollowers.findIndex(user => {
-        return user.userName === userName;
-      });
-      if (status === "declined") {
+        return user.userName === userName
+      })
+      if (status === 'declined') {
         const removeFollower = await this.$apollo.mutate({
           mutation: REMOVE_FOLLOWER_MUTATION,
           variables: {
             userName: userName
           }
-        });
+        })
         if (removeFollower.data.removeFollowerRequest.ok) {
-          updatedFollowers.splice(followerIndex, 1);
-          this.followers = updatedFollowers;
+          updatedFollowers.splice(followerIndex, 1)
+          this.followers = updatedFollowers
         }
       } else {
         const updatedFollower = await this.$apollo.mutate({
@@ -83,42 +83,42 @@ export default {
             userName: userName,
             status: status
           }
-        });
+        })
         if (updatedFollower.data.updateFollowerRequest.ok) {
-          updatedFollowers[followerIndex].status = status;
-          this.followers = updatedFollowers;
+          updatedFollowers[followerIndex].status = status
+          this.followers = updatedFollowers
         }
       }
     }
   },
 
-  async created() {
+  async created () {
     const following = await this.$apollo.query({
       query: GET_FOLLOWING_QUERY
-    });
+    })
     const followers = await this.$apollo.query({
       query: GET_FOLLOWERS_QUERY
-    });
+    })
     this.following = following.data.following
       .filter(user => {
-        return user.status === 1;
+        return user.status === 1
       })
       .map(user => {
-        let tempUser = user.following;
-        tempUser["status"] = statusList[user.status];
-        return tempUser;
-      });
+        const tempUser = user.following
+        tempUser.status = statusList[user.status]
+        return tempUser
+      })
 
     this.followers = followers.data.followers
       .filter(user => {
-        return user.status !== 3;
+        return user.status !== 3
       })
       .map(user => {
-        let tempUser = user.follower;
-        tempUser["status"] = statusList[user.status];
-        return tempUser;
-      });
+        const tempUser = user.follower
+        tempUser.status = statusList[user.status]
+        return tempUser
+      })
   }
-};
+}
 </script>
 <style></style>

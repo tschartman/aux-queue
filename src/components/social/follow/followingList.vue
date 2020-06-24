@@ -22,7 +22,7 @@
   </div>
 </template>
 <script>
-import { QImg, QAvatar } from "quasar";
+import { QImg, QAvatar } from 'quasar'
 
 export default {
   components: {
@@ -33,6 +33,6 @@ export default {
     following: Array,
     method: { type: Function }
   }
-};
+}
 </script>
 <style lang="stylus"></style>

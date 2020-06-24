@@ -9,6 +9,22 @@ const routes = [
     ]
   },
   {
+    path: '/social',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', component: () => import('pages/social/Social.vue') }
+    ]
+  },
+  {
+    path: '/me',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', component: () => import('pages/auth/user.vue') }
+    ]
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('pages/auth/login.vue')
