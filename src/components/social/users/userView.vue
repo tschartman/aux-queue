@@ -11,7 +11,6 @@
           <div class="text-h6">{{ user.firstName }} {{ user.lastName }}</div>
         </q-item-label>
         <q-item-label>
-          Friend Code:
           <div class="text-subtitle2">
             {{ user.userName }}
           </div>

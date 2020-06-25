@@ -40,115 +40,39 @@
     </q-select>
     <div>
       <div v-if="friend">
-        <userView :user="friend" />
         <div class="row justify-center" q-ma-md>
-          <div v-if="friend.followingStatus === 'none'">
-            <q-btn
-              flat
-              color="primary"
-              label="Follow"
-              @click="sendFollowRequest"
-            />
-          </div>
-          <div v-if="friend.followingStatus === 'pending'">
-            <q-btn flat color="primary" label="Requested">
-              <q-menu>
-                <q-item
-                  style="width: 110px"
-                  @click="unFollow"
-                  clickable
-                  v-close-popup
-                >
-                  <q-item-section>Cancel</q-item-section>
-                </q-item>
-              </q-menu>
-            </q-btn>
-          </div>
-          <div v-if="friend.followingStatus === 'accepted'">
-            <q-btn flat color="primary" label="Following">
-              <q-menu>
-                <q-item
-                  style="width: 110px"
-                  @click="unFollow"
-                  clickable
-                  v-close-popup
-                >
-                  <q-item-section>Unfollow</q-item-section>
-                </q-item>
-              </q-menu>
-            </q-btn>
-          </div>
-          <div v-if="friend.followerStatus === 'accepted'">
-            <q-btn flat color="primary" label="Follows You">
-              <q-menu>
-                <q-item
-                  style="width: 110px"
-                  @click="block"
-                  clickable
-                  v-close-popup
-                >
-                  <q-item-section>Block</q-item-section>
-                </q-item>
-              </q-menu>
-            </q-btn>
-          </div>
-          <div v-if="friend.followerStatus === 'pending'">
-            <q-btn flat color="primary" label="Requesting">
-              <q-menu>
-                <q-list>
-                  <q-item
-                    style="width: 110px"
-                    @click="acceptFollower"
-                    clickable
-                    v-close-popup
-                  >
-                    <q-item-section>Accept</q-item-section>
-                  </q-item>
-                  <q-item
-                    style="width: 110px"
-                    @click="declineFollower"
-                    clickable
-                    v-close-popup
-                  >
-                    <q-item-section>Decline</q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
-          </div>
-          <div v-if="friend.followerStatus === 'blocked'">
-            <q-btn flat color="primary" label="Blocked">
-              <q-menu>
-                <q-item
-                  style="width: 110px"
-                  @click="unBlock"
-                  clickable
-                  v-close-popup
-                >
-                  <q-item-section>Unblock</q-item-section>
-                </q-item>
-              </q-menu>
-            </q-btn>
-          </div>
+          <follow
+            :status="friend.followingStatus"
+            @unFollow="unFollow"
+            @sendFollowRequest="sendFollowRequest"
+          />
+          <follower
+            :status="friend.followerStatus"
+            @block="block"
+            @unBlock="unBlock"
+            @acceptFollower="acceptFollower"
+            @declineFollower="declineFollower"
+          />
         </div>
+        <userView :user="friend" />
       </div>
     </div>
   </div>
 </template>
 <script>
-import { QSelect, QImg, QMenu } from 'quasar'
+import { QSelect, QImg } from 'quasar'
 import { GET_USERS_QUERY } from 'src/graphql/queries/userQueries'
 import {
   GET_FOLLOWING_QUERY,
   GET_FOLLOWERS_QUERY,
-  SET_FOLLOWING_QUERY,
-  SET_FOLLOWERS_QUERY,
   SEND_FOLLOW_MUTATION,
   UPDATE_FOLLOWER_MUTATION,
   REMOVE_FOLLOW_MUTATION,
   REMOVE_FOLLOWER_MUTATION
 } from 'src/graphql/queries/followerQueries'
 import userView from 'src/components/social/users/userView'
+import follow from 'src/components/social/menu/follow'
+import follower from 'src/components/social/menu/follower'
 const statusList = ['pending', 'accepted', 'declined', 'blocked']
 export default {
   props: {
@@ -156,9 +80,10 @@ export default {
     selectedFriend: Object
   },
   components: {
+    follow,
+    follower,
     QSelect,
     QImg,
-    QMenu,
     userView
   },
   data () {
@@ -175,7 +100,12 @@ export default {
       deep: true,
       async handler (selectedFriend) {
         if (selectedFriend.friend) {
-          this.selectUser(selectedFriend.friend)
+          const friend = {
+            firstName: selectedFriend.friend.firstName,
+            userImage: selectedFriend.friend.userImage,
+            userName: selectedFriend.friend.userName
+          }
+          this.selectUser(friend)
         }
       }
     }
@@ -212,86 +142,6 @@ export default {
       }
       return 'none'
     },
-    updateFollowerCache (status) {
-      const followersData = this.$apollo
-        .getClient()
-        .readQuery({ query: GET_FOLLOWERS_QUERY })
-      let followers = {}
-      if (status === 'none') {
-        followers = followersData.followers
-          .filter(user => {
-            return user.follower.userName !== this.friend.userName
-          })
-          .map(user => {
-            return {
-              id: user.id,
-              status: statusList.indexOf(status),
-              __typename: 'RelationshipType'
-            }
-          })
-      } else {
-        followers = followersData.followers.map(user => {
-          if (user.follower.userName === this.friend.userName) {
-            return {
-              id: user.id,
-              status: statusList.indexOf(status),
-              __typename: 'RelationshipType'
-            }
-          }
-          return {
-            id: user.id,
-            status: user.status,
-            __typename: 'RelationshipType'
-          }
-        })
-      }
-      this.$apollo.getClient().writeQuery({
-        query: SET_FOLLOWERS_QUERY,
-        data: {
-          followers: followers
-        }
-      })
-    },
-    updateFollowingCache (status) {
-      const followingData = this.$apollo
-        .getClient()
-        .readQuery({ query: GET_FOLLOWING_QUERY })
-      let following = {}
-      if (status === 'none') {
-        following = followingData.following
-          .filter(user => {
-            return user.following.userName !== this.friend.userName
-          })
-          .map(user => {
-            return {
-              id: user.id,
-              status: user.status,
-              __typename: 'RelationshipType'
-            }
-          })
-      } else {
-        following = followingData.following.map(user => {
-          if (user.following.userName === this.friend.userName) {
-            return {
-              id: user.id,
-              status: statusList.indexOf(status),
-              __typename: 'RelationshipType'
-            }
-          }
-          return {
-            id: user.id,
-            status: user.status,
-            __typename: 'RelationshipType'
-          }
-        })
-      }
-      this.$apollo.getClient().writeQuery({
-        query: SET_FOLLOWING_QUERY,
-        data: {
-          following: following
-        }
-      })
-    },
     async sendFollowRequest () {
       const follow = await this.$apollo.mutate({
         mutation: SEND_FOLLOW_MUTATION,
@@ -299,7 +149,8 @@ export default {
       })
       if (follow.data.sendFollowRequest.ok) {
         this.$set(this.friend, 'followingStatus', 'pending')
-        this.updateFollowingCache('pending')
+      } else {
+        this.notify('Error sending follow request')
       }
     },
     async unFollow () {
@@ -311,7 +162,8 @@ export default {
       })
       if (removeFollow.data.removeFollowRequest.ok) {
         this.$set(this.friend, 'followingStatus', 'none')
-        this.updateFollowingCache('none')
+      } else {
+        this.notify('Error unfollowing user')
       }
     },
     async block () {
@@ -324,7 +176,8 @@ export default {
       })
       if (updatedFollower.data.updateFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'blocked')
-        this.updateFollowerCache('blocked')
+      } else {
+        this.notify('Error blocking user')
       }
     },
     async unBlock () {
@@ -336,7 +189,8 @@ export default {
       })
       if (removeFollower.data.removeFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'none')
-        this.updateFollowerCache('none')
+      } else {
+        this.notify('Error unblocking user')
       }
     },
     async acceptFollower () {
@@ -349,7 +203,8 @@ export default {
       })
       if (updatedFollower.data.updateFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'accepted')
-        this.updateFollowerCache('accepted')
+      } else {
+        this.notify('Error accepting friend request')
       }
     },
     async declineFollower () {
@@ -361,8 +216,16 @@ export default {
       })
       if (removeFollower.data.removeFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'none')
-        this.updateFollowerCache('none')
+      } else {
+        this.notify('Error declining follow request')
       }
+    },
+    notify (msg) {
+      this.$q.notify({
+        color: 'negative',
+        message: msg,
+        icon: 'report_problem'
+      })
     },
     filterFn (val, update, abort) {
       if (val.length < 1 || val === '' || !val) {

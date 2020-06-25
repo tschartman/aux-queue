@@ -9,8 +9,8 @@ import { createHttpLink } from 'apollo-link-http'
 import Store from 'src/store/index'
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:8000/graphql/'
-  // 'https://auxstack.herokuapp.com/graphql/'
+  uri: // 'http://localhost:8000/graphql/'
+   'https://auxstack.herokuapp.com/graphql/'
 })
 
 // const wsLink = new WebSocketLink({

@@ -110,7 +110,7 @@ export default {
       if (removeSong.data.removeSong.ok) {
         this.$emit('removeSong', song)
       } else {
-        this.queue.notify(alerts[0])
+        this.$q.notify(alerts[0])
       }
     },
     confirmShutDown () {
