@@ -97,9 +97,9 @@ export default {
       const accepted = []
       const requested = []
       followers.forEach(user => {
-        if (user.status === 'pending') {
+        if (user.followerStatus === 'pending') {
           requested.push(user)
-        } else if (user.status === 'accepted') {
+        } else if (user.followerStatus === 'accepted') {
           accepted.push(user)
         }
       })

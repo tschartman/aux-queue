@@ -21,7 +21,7 @@
         >
           <q-item-section avatar>
             <q-img
-              :src="user.userImage || 'https://www.gravatar.com/avatar/'"
+              :src="scope.opt.userImage || 'https://www.gravatar.com/avatar/'"
             />
           </q-item-section>
           <q-item-section>
@@ -117,6 +117,7 @@ export default {
       const followerStatus = await this.findFollowerStatus(user.userName)
       this.$set(this.friend, 'followingStatus', followingStatus)
       this.$set(this.friend, 'followerStatus', followerStatus)
+      this.$emit('clearSelected')
     },
     async findFollowingStatus (userName) {
       const followingData = await this.$apollo.query({
@@ -162,6 +163,7 @@ export default {
       })
       if (removeFollow.data.removeFollowRequest.ok) {
         this.$set(this.friend, 'followingStatus', 'none')
+        this.$emit('updateFollowing', 'none', this.friend.userName)
       } else {
         this.notify('Error unfollowing user')
       }
@@ -176,6 +178,7 @@ export default {
       })
       if (updatedFollower.data.updateFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'blocked')
+        this.$emit('updateFollower', 'blocked', this.friend.userName)
       } else {
         this.notify('Error blocking user')
       }
@@ -189,6 +192,7 @@ export default {
       })
       if (removeFollower.data.removeFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'none')
+        this.$emit('updateFollower', 'none', this.friend.userName)
       } else {
         this.notify('Error unblocking user')
       }
@@ -203,6 +207,7 @@ export default {
       })
       if (updatedFollower.data.updateFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'accepted')
+        this.$emit('updateFollower', 'accepted', this.friend.userName)
       } else {
         this.notify('Error accepting friend request')
       }
@@ -216,6 +221,7 @@ export default {
       })
       if (removeFollower.data.removeFollowerRequest.ok) {
         this.$set(this.friend, 'followerStatus', 'none')
+        this.$emit('updateFollower', 'none', this.friend.userName)
       } else {
         this.notify('Error declining follow request')
       }
@@ -243,7 +249,7 @@ export default {
   async created () {
     const users = await this.$apollo.query({ query: GET_USERS_QUERY })
     this.options = users.data.users.filter(user => {
-      if (user.userName === this.user.userName) {
+      if (user.userName === this.$store.getters.user.userName) {
         return false
       }
       return true
