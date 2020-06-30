@@ -32,22 +32,6 @@ export const GET_FOLLOWING_QUERY = gql`
   }
 `
 
-export const SET_FOLLOWERS_QUERY = gql`
-  query getFollwers {
-    followers {
-      status
-    }
-  }
-`
-
-export const SET_FOLLOWING_QUERY = gql`
-  query getFollowing {
-    following {
-      status
-    }
-  }
-`
-
 export const SEND_FOLLOW_MUTATION = gql`
   mutation sendFollowRequest($userName: String!) {
     sendFollowRequest(input: { userName: $userName }) {
