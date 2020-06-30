@@ -20,6 +20,7 @@
     <partyView
       v-else
       :party="party"
+      @joinParty="joinParty"
       @removeSong="removeSong"
       @refreshSong="refreshSong"
       @suggestSong="suggestSong"
@@ -77,6 +78,9 @@ export default {
     }
   },
   methods: {
+    joinParty (guests) {
+      this.$set(this.party, 'guests', guests)
+    },
     updateQueue (action, song) {
       const user = this.$store.getters.user
       const queue = Array.from(this.party.queue)
@@ -101,6 +105,7 @@ export default {
     async suggestSong (song) {
       const queue = Array.from(this.party.queue)
       const newSong = {
+        id: this.party.id,
         title: song.name,
         artist: song.artists[0].name,
         album: song.album.name,

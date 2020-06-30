@@ -1,7 +1,11 @@
 <template>
   <div>
-    <p class="text-overline title">Requests Remaining: {{ songRequests }}</p>
-    <div class="q-pa-md">
+    <div class="row justify-center">
+      <p v-if="findGuest && findGuest.status === 1" class="text-overline title">Requests Remaining: {{ songRequests }}</p>
+      <p v-else-if="findGuest && findGuest.status === 0" class="text-overline title">Pending</p>
+      <q-btn v-else @click="joinParty" flat color="primary">Join Party</q-btn>
+    </div>
+    <div class="q-pa-md" v-if="findGuest && findGuest.status === 1">
       <searchContainer @selectSong="suggestSong" />
     </div>
     <q-pull-to-refresh @refresh="pullRefreshSong">
@@ -19,7 +23,7 @@
         :songs="party.queue"
       />
       <div v-else class="row justify-center text-body1">
-        No suggested Songs. Search for a song and suggest one!
+        No suggested Songs
       </div>
     </q-scroll-area>
   </div>
@@ -31,7 +35,8 @@ import currentPlayback from '../playback/currentPlayback'
 import searchContainer from '../search/searchContainer'
 import {
   RATE_SONG_MUTATION,
-  REMOVE_RATING_MUTATION
+  REMOVE_RATING_MUTATION,
+  JOIN_PARTY_MUTATION
 } from 'src/graphql/queries/partyQueries'
 const alerts = [
   {
@@ -42,6 +47,11 @@ const alerts = [
   {
     color: 'negative',
     message: 'You are out out song requests',
+    icon: 'report_problem'
+  },
+  {
+    color: 'negative',
+    message: 'Error joining party',
     icon: 'report_problem'
   }
 ]
@@ -62,20 +72,37 @@ export default {
   },
   computed: {
     songRequests () {
-      const guest = this.party.guests.find(
+      const guest = this.findGuest
+      return guest ? guest.allowedRequests - guest.amountRequested : null
+    },
+    findGuest () {
+      return this.party.guests.find(
         g => g.user.userName === this.$store.getters.user.userName
       )
-      return guest.allowedRequests - guest.amountRequested
     }
   },
   methods: {
+    async joinParty () {
+      const joinParty = await this.$apollo.mutate({
+        mutation: JOIN_PARTY_MUTATION,
+        variables: {
+          userName: this.party.host.userName
+        }
+      })
+      if (joinParty.data.joinParty.ok) {
+        this.$emit('joinParty', joinParty.data.joinParty.party.guests)
+      } else {
+        this.$q.notify(alerts[2])
+      }
+    },
     async likeSong (song) {
       const user = this.$store.getters.user
       if (song.rating.find(r => r.user.userName === user.userName && r.like)) {
         const removeRating = await this.$apollo.mutate({
           mutation: REMOVE_RATING_MUTATION,
           variables: {
-            id: song.id
+            id: song.id,
+            partyId: this.party.id
           }
         })
         if (removeRating.data.removeRating.ok) {
@@ -87,8 +114,9 @@ export default {
         const rateSong = await this.$apollo.mutate({
           mutation: RATE_SONG_MUTATION,
           variables: {
+            like: true,
             id: song.id,
-            like: true
+            partyId: this.party.id
           }
         })
         if (rateSong.data.rateSong.ok) {
@@ -104,7 +132,8 @@ export default {
         const removeRating = await this.$apollo.mutate({
           mutation: REMOVE_RATING_MUTATION,
           variables: {
-            id: song.id
+            id: song.id,
+            partyId: this.party.id
           }
         })
         if (removeRating.data.removeRating.ok) {
@@ -116,8 +145,9 @@ export default {
         const rateSong = await this.$apollo.mutate({
           mutation: RATE_SONG_MUTATION,
           variables: {
+            like: false,
             id: song.id,
-            like: false
+            partyId: this.party.id
           }
         })
         if (rateSong.data.rateSong.ok) {

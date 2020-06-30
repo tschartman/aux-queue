@@ -1,6 +1,53 @@
 <template>
   <div v-if="guests">
-    <q-item v-for="guest in guests" :key="guest.user.userName">
+      <q-expansion-item
+      expand-separator
+      icon="perm_identity"
+      label="Requested"
+      :caption="String(requested.length)"
+      default-opened
+    >
+      <q-item v-for="guest in requested" :key="guest.id" clickable>
+        <q-item-section avatar>
+          <q-avatar>
+            <q-img
+              :src="guest.user.userImage || 'https://www.gravatar.com/avatar/'"
+            />
+          </q-avatar>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label v-html="guest.user.userName" />
+          <q-item-label caption>{{ guest.user.firstName }}</q-item-label>
+        </q-item-section>
+        <q-item-section avatar>
+          <div class="row">
+            <div class="q-mx-md">
+              <q-icon
+                size="md"
+                name="clear"
+                @click="sendRemoveRequest(guest.id)"
+              >
+                <q-tooltip>
+                  Decline
+                </q-tooltip>
+              </q-icon>
+            </div>
+            <div class="q-mx-md">
+              <q-icon
+                size="md"
+                name="done"
+                @click="allowInParty(guest.id)"
+              >
+                <q-tooltip>
+                  Accept
+                </q-tooltip>
+              </q-icon>
+            </div>
+          </div>
+        </q-item-section>
+      </q-item>
+    </q-expansion-item>
+    <q-item v-for="guest in accepted" :key="guest.user.userName">
       <q-item-section avatar>
         <q-avatar>
           <q-img
@@ -55,10 +102,11 @@
   </div>
 </template>
 <script>
-import { QImg, QAvatar, QTooltip, QPopupEdit, QInput } from 'quasar'
+import { QImg, QAvatar, QTooltip, QPopupEdit, QInput, QExpansionItem } from 'quasar'
 import {
   UPDATE_ALLOWED_REQUEST,
-  REMOVE_FROM_PARTY_MUTATION
+  REMOVE_FROM_PARTY_MUTATION,
+  ALLOW_IN_PARTY_MUTATION
 } from 'src/graphql/queries/partyQueries'
 export default {
   components: {
@@ -66,7 +114,8 @@ export default {
     QAvatar,
     QTooltip,
     QPopupEdit,
-    QInput
+    QInput,
+    QExpansionItem
   },
   props: {
     users: Array,
@@ -75,6 +124,14 @@ export default {
   data () {
     return {
       guests: []
+    }
+  },
+  computed: {
+    accepted () {
+      return this.guests.filter(guest => guest.status === 1)
+    },
+    requested () {
+      return this.guests.filter(guest => guest.status === 0)
     }
   },
   methods: {
@@ -113,11 +170,26 @@ export default {
         variables: { id: id }
       })
       if (removeFromParty.data.removeFromParty.ok) {
-        this.guests = Array.from(this.guests).filter(g => g.id === id)
+        this.$set(this, 'guests', removeFromParty.data.removeFromParty.party.guests)
       } else {
         this.$q.notify({
           color: 'negative',
           message: 'Error removing user from party',
+          icon: 'report_problem'
+        })
+      }
+    },
+    async allowInParty (id) {
+      const allowInParty = await this.$apollo.mutate({
+        mutation: ALLOW_IN_PARTY_MUTATION,
+        variables: { id: id }
+      })
+      if (allowInParty.data.allowInParty.ok) {
+        this.$set(this, 'guests', allowInParty.data.allowInParty.party.guests)
+      } else {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Error accepting request',
           icon: 'report_problem'
         })
       }

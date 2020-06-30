@@ -13,6 +13,7 @@ export const GET_PARTIES_QUERY = gql`
       }
       guests {
         id
+        status
         user {
           userName
         }
@@ -57,6 +58,7 @@ export const PARTY_UPDATED_SUBSCRIPTION = gql`
       }
       guests {
         id
+        status
         allowedRequests
         amountRequested
         user {
@@ -80,6 +82,7 @@ export const GET_PARTY_QUERY = gql`
       }
       guests {
         id
+        status
         allowedRequests
         amountRequested
         user {
@@ -116,8 +119,8 @@ export const GET_PARTY_QUERY = gql`
 `
 
 export const RATE_SONG_MUTATION = gql`
-  mutation rateSong($id: ID!, $like: Boolean!) {
-    rateSong(input: { id: $id, like: $like }) {
+  mutation rateSong($id: ID!, $like: Boolean!, $partyId: ID!) {
+    rateSong(input: { id: $id, like: $like, partyId: $partyId }) {
       ok
     }
   }
@@ -132,8 +135,8 @@ export const REMOVE_SONG_MUTATION = gql`
 `
 
 export const REMOVE_RATING_MUTATION = gql`
-  mutation removeRating($id: ID!) {
-    removeRating(input: { id: $id }) {
+  mutation removeRating($id: ID!, $partyId: ID!) {
+    removeRating(input: { id: $id, partyId: $partyId }) {
       ok
     }
   }
@@ -181,11 +184,46 @@ export const LEAVE_PARTY_MUTATION = gql`
     }
   }
 `
+export const ALLOW_IN_PARTY_MUTATION = gql`
+  mutation AllowInParty($id: ID!) {
+    allowInParty(input: { id: $id }) {
+      ok
+      party {
+        guests {
+          id
+          status
+          allowedRequests
+          amountRequested
+          user {
+            userName
+            firstName
+            lastName
+            userImage
+          }
+        }
+      }
+    }
+  }
+`
 
 export const REMOVE_FROM_PARTY_MUTATION = gql`
   mutation RemoveFromParty($id: ID!) {
     removeFromParty(input: { id: $id }) {
       ok
+      party {
+        guests {
+          id
+          status
+          allowedRequests
+          amountRequested
+          user {
+            userName
+            firstName
+            lastName
+            userImage
+          }
+        }
+      }
     }
   }
 `
@@ -216,6 +254,20 @@ export const JOIN_PARTY_MUTATION = gql`
   mutation joinParty($userName: String!) {
     joinParty(input: { userName: $userName }) {
       ok
+      party {
+        guests {
+          id
+          status
+          allowedRequests
+          amountRequested
+          user {
+            userName
+            firstName
+            lastName
+            userImage
+          }
+        }
+      }
     }
   }
 `
