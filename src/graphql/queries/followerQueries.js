@@ -41,24 +41,46 @@ export const SEND_FOLLOW_MUTATION = gql`
 `
 
 export const UPDATE_FOLLOW_MUTATION = gql`
-  mutation UpdateFollowRequest($userName: String!, $status: String!) {
-    updateFollowRequest(input: { userName: $userName, status: $status }) {
+  mutation UpdateFollowRequest($id: ID!, $status: String!) {
+    updateFollowRequest(input: { id: $id, status: $status }) {
       ok
+      following {
+        id
+        status
+        following {
+          userName
+          firstName
+          lastName
+          email
+          accessToken
+        }
+      }
     }
   }
 `
 
 export const UPDATE_FOLLOWER_MUTATION = gql`
-  mutation UpdateFollowerRequest($userName: String!, $status: String!) {
-    updateFollowerRequest(input: { userName: $userName, status: $status }) {
+  mutation UpdateFollowerRequest($id: ID!, $status: String!) {
+    updateFollowerRequest(input: { id: $id, status: $status }) {
       ok
+      follower {
+        id
+        status
+        follower {
+          userName
+          firstName
+          lastName
+          email
+          accessToken
+        }
+      }
     }
   }
 `
 
 export const REMOVE_FOLLOW_MUTATION = gql`
-  mutation RemoveFollowRequest($userName: String!) {
-    removeFollowRequest(input: { userName: $userName }) {
+  mutation RemoveFollowRequest($id: ID!) {
+    removeFollowRequest(input: { id: $id }) {
       ok
     }
   }

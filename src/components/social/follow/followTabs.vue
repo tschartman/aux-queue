@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-tabs v-model="tab" class="text-teal">
+    <q-tabs v-if="following && followers" v-model="tab" class="text-teal">
       <q-tab name="following" label="Following">{{ following.length }} </q-tab>
       <q-tab name="followers" label="Followers">{{ followers.length }}</q-tab>
     </q-tabs>
@@ -19,7 +19,7 @@
         <followerList
           :followers="followers"
           @selectUser="selectUser"
-          @updateFollow="updateFollow"
+          @updateFollower="updateFollower"
         />
       </q-tab-panel>
     </q-tab-panels>
@@ -29,11 +29,14 @@
 import { QTabs, QTab, QTabPanel, QTabPanels, QSeparator } from 'quasar'
 import followerList from 'src/components/social/follow/followerList'
 import followingList from 'src/components/social/follow/followingList'
+import {
+  GET_FOLLOWERS_QUERY,
+  GET_FOLLOWING_QUERY,
+  UPDATE_FOLLOWER_MUTATION
+} from 'src/graphql/queries/followerQueries'
 export default {
   props: {
-    method: { type: Function },
-    followers: Array,
-    following: Array
+    method: { type: Function }
   },
   components: {
     QTabs,
@@ -49,12 +52,28 @@ export default {
       tab: 'following'
     }
   },
+  apollo: {
+    following: {
+      query: GET_FOLLOWING_QUERY,
+      update: data => data.following.filter(f => f.status === 1)
+    },
+    followers: {
+      query: GET_FOLLOWERS_QUERY,
+      update: data => data.followers.filter(f => f.status !== 3)
+    }
+  },
   methods: {
     selectUser (user) {
       this.$emit('selectUser', user)
     },
-    updateFollow (status, userName) {
-      this.$emit('updateFollow', status, userName)
+    updateFollower (status, id) {
+      this.$apollo.mutate({
+        mutation: UPDATE_FOLLOWER_MUTATION,
+        variables: {
+          id: id,
+          status: status
+        }
+      })
     }
   }
 }

@@ -1,20 +1,20 @@
 <template>
   <div>
     <q-item
-      v-for="user in following"
-      :key="user.userName"
-      @click="$emit('selectUser', user)"
+      v-for="follow in following"
+      :key="follow.following.followingName"
+      @click="$emit('selectfollowing', follow)"
       clickable
     >
       <q-item-section avatar>
         <q-avatar>
-          <q-img :src="user.userImage || 'https://www.gravatar.com/avatar/'" />
+          <q-img :src="follow.following.userImage || 'https://www.gravatar.com/avatar/'" />
         </q-avatar>
       </q-item-section>
       <q-item-section>
-        <q-item-label v-html="user.userName" />
+        <q-item-label v-html="follow.following.userName" />
         <q-item-label caption
-          >{{ user.firstName }} {{ user.lastName }}</q-item-label
+          >{{ follow.following.firstName }} {{ follow.following.lastName }}</q-item-label
         >
       </q-item-section>
       <q-item-section avatar> </q-item-section>

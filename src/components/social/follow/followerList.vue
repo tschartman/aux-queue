@@ -7,17 +7,17 @@
       :caption="String(requested.length)"
       default-opened
     >
-      <q-item v-for="user in requested" :key="user.userName" clickable>
-        <q-item-section @click="$emit('selectUser', user)" avatar>
+      <q-item v-for="follower in requested" :key="follower.id" clickable>
+        <q-item-section @click="$emit('selectUser', follower)" avatar>
           <q-avatar>
             <q-img
-              :src="user.userImage || 'https://www.gravatar.com/avatar/'"
+              :src="follower.follower.userImage || 'https://www.gravatar.com/avatar/'"
             />
           </q-avatar>
         </q-item-section>
         <q-item-section @click="$emit('selectUser', user)">
-          <q-item-label v-html="user.userName" />
-          <q-item-label caption>{{ user.firstName }}</q-item-label>
+          <q-item-label v-html="follower.follower.userName" />
+          <q-item-label caption>{{ follower.follower.firstName }}</q-item-label>
         </q-item-section>
         <q-item-section avatar>
           <div class="row">
@@ -25,7 +25,7 @@
               <q-icon
                 size="md"
                 name="clear"
-                @click="$emit('updateFollow', 'declined', user.userName)"
+                @click="$emit('updateFollower', 'declined', follower.id)"
               >
                 <q-tooltip>
                   Decline
@@ -36,7 +36,7 @@
               <q-icon
                 size="md"
                 name="done"
-                @click="$emit('updateFollow', 'accepted', user.userName)"
+                @click="$emit('updateFollower', 'accepted', follower.id)"
               >
                 <q-tooltip>
                   Accept
@@ -48,20 +48,20 @@
       </q-item>
     </q-expansion-item>
     <q-item
-      v-for="user in accepted"
-      :key="user.userName"
-      @click="$emit('selectUser', user)"
+      v-for="follower in accepted"
+      :key="follower.id"
+      @click="$emit('selectUser', follower)"
       clickable
     >
       <q-item-section avatar>
         <q-avatar>
-          <q-img :src="user.userImage || 'https://www.gravatar.com/avatar/'" />
+          <q-img :src="follower.follower.userImage || 'https://www.gravatar.com/avatar/'" />
         </q-avatar>
       </q-item-section>
       <q-item-section>
-        <q-item-label v-html="user.userName" />
+        <q-item-label v-html="follower.follower.userName" />
         <q-item-label caption
-          >{{ user.firstName }} {{ user.lastName }}</q-item-label
+          >{{ follower.follower.firstName }} {{ follower.follower.lastName }}</q-item-label
         >
       </q-item-section>
     </q-item>
@@ -82,33 +82,15 @@ export default {
     method: { type: Function }
   },
   data () {
-    return {
-      requested: [],
-      accepted: []
-    }
+    return {}
   },
-  watch: {
-    followers: function (updatedFollowers) {
-      this.categorizeFollowers(updatedFollowers)
+  computed: {
+    requested () {
+      return this.followers.filter(f => f.status === 0)
+    },
+    accepted () {
+      return this.followers.filter(f => f.status === 1)
     }
-  },
-  methods: {
-    categorizeFollowers (followers) {
-      const accepted = []
-      const requested = []
-      followers.forEach(user => {
-        if (user.followerStatus === 'pending') {
-          requested.push(user)
-        } else if (user.followerStatus === 'accepted') {
-          accepted.push(user)
-        }
-      })
-      this.accepted = accepted
-      this.requested = requested
-    }
-  },
-  created () {
-    this.categorizeFollowers(this.followers)
   }
 }
 </script>
