@@ -3,7 +3,7 @@
     <q-item
       v-for="follow in following"
       :key="follow.following.followingName"
-      @click="$emit('selectfollowing', follow)"
+      @click="$emit('selectUser', follow.following)"
       clickable
     >
       <q-item-section avatar>

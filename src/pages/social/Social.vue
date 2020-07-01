@@ -1,25 +1,30 @@
 <template>
   <div>
-    <Friends :selectedFriend="selectedFriend" />
+    <searchUsers @selectUser="selectUser" />
+    <Friends :user="user" />
     <FollowTabs @selectUser="selectUser" />
   </div>
 </template>
 <script>
 import Friends from 'src/pages/social/Friends'
 import FollowTabs from 'src/components/social/follow/FollowTabs'
+import searchUsers from 'src/components/social/search/searchUsers'
+
 export default {
   components: {
     Friends,
-    FollowTabs
+    FollowTabs,
+    searchUsers
   },
   data () {
     return {
-      selectedFriend: {}
+      user: null
     }
   },
   methods: {
     selectUser (user) {
-      this.$set(this.selectedFriend, 'friend', user)
+      console.log(user)
+      this.$set(this, 'user', user)
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="status === 'accepted'">
+        <div v-if="status === 1">
             <q-btn flat color="primary" label="Follows You">
                 <q-menu>
                 <q-item
@@ -14,7 +14,7 @@
                 </q-menu>
             </q-btn>
         </div>
-        <div v-if="status === 'pending'">
+        <div v-if="status === 0">
             <q-btn flat color="primary" label="Requesting">
                 <q-menu>
                 <q-list>
@@ -38,7 +38,7 @@
                 </q-menu>
             </q-btn>
         </div>
-        <div v-if="status === 'blocked'">
+        <div v-if="status === 3">
             <q-btn flat color="primary" label="Blocked">
                 <q-menu>
                 <q-item
@@ -58,7 +58,7 @@
 export default {
   props: {
     method: { type: Function },
-    status: String
+    status: Number
   }
 }
 </script>

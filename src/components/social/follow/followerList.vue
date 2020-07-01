@@ -8,14 +8,14 @@
       default-opened
     >
       <q-item v-for="follower in requested" :key="follower.id" clickable>
-        <q-item-section @click="$emit('selectUser', follower)" avatar>
+        <q-item-section @click="$emit('selectUser', follower.follower)" avatar>
           <q-avatar>
             <q-img
               :src="follower.follower.userImage || 'https://www.gravatar.com/avatar/'"
             />
           </q-avatar>
         </q-item-section>
-        <q-item-section @click="$emit('selectUser', user)">
+        <q-item-section @click="$emit('selectUser', follower.follower)">
           <q-item-label v-html="follower.follower.userName" />
           <q-item-label caption>{{ follower.follower.firstName }}</q-item-label>
         </q-item-section>
@@ -50,7 +50,7 @@
     <q-item
       v-for="follower in accepted"
       :key="follower.id"
-      @click="$emit('selectUser', follower)"
+      @click="$emit('selectUser', follower.follower)"
       clickable
     >
       <q-item-section avatar>

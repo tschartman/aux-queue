@@ -31,11 +31,52 @@ export const GET_FOLLOWING_QUERY = gql`
     }
   }
 `
+export const GET_FOLLOW_QUERY = gql`
+  query getFollow($userName: String!) {
+    follow(userName: $userName) {
+      id
+      status
+      following {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+    }
+  }
+`
+export const GET_FOLLOWER_QUERY = gql`
+  query getFollower($userName: String!) {
+    follower(userName: $userName) {
+      id
+      status
+      follower {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+    }
+  }
+`
 
 export const SEND_FOLLOW_MUTATION = gql`
   mutation sendFollowRequest($userName: String!) {
     sendFollowRequest(input: { userName: $userName }) {
       ok
+      following {
+        id
+        status
+        following {
+          userName
+          firstName
+          lastName
+          email
+          accessToken
+        }
+      }
     }
   }
 `
@@ -87,8 +128,8 @@ export const REMOVE_FOLLOW_MUTATION = gql`
 `
 
 export const REMOVE_FOLLOWER_MUTATION = gql`
-  mutation RemoveFollowerRequest($userName: String!) {
-    removeFollowerRequest(input: { userName: $userName }) {
+  mutation RemoveFollowerRequest($id: ID!) {
+    removeFollowerRequest(input: { id: $id }) {
       ok
     }
   }
