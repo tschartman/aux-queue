@@ -17,10 +17,10 @@
         <follower
           v-if="follower"
           :status="follower.status"
-          @block="block"
-          @unBlock="unBlock"
-          @acceptFollower="acceptFollower"
-          @declineFollower="declineFollower"
+          @block="updateFollower('blocked')"
+          @unBlock="removeFollower"
+          @acceptFollower="updateFollower('accepted')"
+          @declineFollower="removeFollower"
         />
       </div>
       <userView v-if="user" :user="user" />
@@ -76,7 +76,11 @@ export default {
     sendFollowRequest () {
       this.$apollo.mutate({
         mutation: SEND_FOLLOW_MUTATION,
-        variables: { userName: this.user.userName }
+        variables: { userName: this.user.userName },
+        refetchQueries: [{
+          query: GET_FOLLOW_QUERY,
+          variables: { userName: this.user.userName }
+        }]
       })
     },
     unFollow () {
@@ -84,41 +88,32 @@ export default {
         mutation: REMOVE_FOLLOW_MUTATION,
         variables: {
           id: this.following.id
-        }
+        },
+        refetchQueries: [{
+          query: GET_FOLLOW_QUERY,
+          variables: { userName: this.user.userName }
+        }]
       })
     },
-    block () {
+    updateFollower (status) {
       this.$apollo.mutate({
         mutation: UPDATE_FOLLOWER_MUTATION,
         variables: {
           id: this.follower.id,
-          status: 'blocked'
+          status: status
         }
       })
     },
-    unBlock () {
+    removeFollower () {
       this.$apollo.mutate({
         mutation: REMOVE_FOLLOWER_MUTATION,
         variables: {
           id: this.follower.id
-        }
-      })
-    },
-    acceptFollower () {
-      this.$apollo.mutate({
-        mutation: UPDATE_FOLLOWER_MUTATION,
-        variables: {
-          id: this.follower.id,
-          status: 'accepted'
-        }
-      })
-    },
-    declineFollower () {
-      this.$apollo.mutate({
-        mutation: REMOVE_FOLLOWER_MUTATION,
-        variables: {
-          id: this.follower.id
-        }
+        },
+        refetchQueries: [{
+          query: GET_FOLLOWER_QUERY,
+          variables: { userName: this.user.userName }
+        }]
       })
     }
   }

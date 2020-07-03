@@ -23,7 +23,6 @@ export default {
   },
   methods: {
     selectUser (user) {
-      console.log(user)
       this.$set(this, 'user', user)
     }
   }
