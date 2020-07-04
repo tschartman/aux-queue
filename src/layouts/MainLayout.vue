@@ -16,6 +16,10 @@
           <q-toolbar-title>
             <img height="35px" width="140px" src='../statics/AuxQueue-logo.png' />
           </q-toolbar-title>
+          <q-toolbar-title>
+            <q-toggle v-model="value" />
+            Dark Mode
+          </q-toolbar-title>
           <q-btn
             flat
             color="black"
@@ -121,10 +125,11 @@ export default {
       leftDrawerOpen: false,
       playlists: [],
       model: null,
-      share: false
+      share: false,
+      value: false
     }
   },
-
+  watch: { value: function () { this.$q.dark.toggle() } },
   methods: {
     openURL,
     async logout () {

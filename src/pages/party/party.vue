@@ -25,7 +25,8 @@
       @refreshSong="refreshSong"
       @suggestSong="suggestSong"
       @leaveParty="leaveParty"
-      @updateQueue="updateQueue"
+      @likeSong="likeSong"
+      @dislikeSong="dislikeSong"
     />
   </div>
 </template>
@@ -35,7 +36,10 @@ import {
   SUGGEST_SONG_MUTATION,
   LEAVE_PARTY_MUTATION,
   SHUT_DOWN_PARTY_MUTATION,
-  REFRESH_CURRENT_SONG
+  REFRESH_CURRENT_SONG,
+  RATE_SONG_MUTATION,
+  REMOVE_RATING_MUTATION,
+  JOIN_PARTY_MUTATION
 } from 'src/graphql/queries/partyQueries'
 import partyView from 'components/party/view/partyView'
 import partyHostView from 'components/party/view/partyHostView'
@@ -78,30 +82,6 @@ export default {
     }
   },
   methods: {
-    joinParty (guests) {
-      this.$set(this.party, 'guests', guests)
-    },
-    updateQueue (action, song) {
-      const user = this.$store.getters.user
-      const queue = Array.from(this.party.queue)
-      const songIndex = queue.findIndex(s => s.id === song.id)
-      const ratingIndex = queue[songIndex].rating.findIndex(
-        r => r.user.userName === user.userName
-      )
-      if (action === 'likeSong' || action === 'dislikeSong') {
-        if (ratingIndex === -1) {
-          queue[songIndex].rating.push({
-            like: action === 'likeSong',
-            user: user
-          })
-        } else {
-          queue[songIndex].rating[ratingIndex].like = action === 'likeSong'
-        }
-      } else if (action === 'removeRating') {
-        queue[songIndex].rating.splice(ratingIndex, 1)
-      }
-      this.$set(this.party, 'queue', queue)
-    },
     async suggestSong (song) {
       const queue = Array.from(this.party.queue)
       const newSong = {
@@ -113,37 +93,15 @@ export default {
         songUri: song.uri
       }
       if (queue.findIndex(s => s.song.songUri === newSong.songUri) === -1) {
-        const suggestedSong = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: SUGGEST_SONG_MUTATION,
-          variables: { input: newSong }
+          variables: { input: newSong },
+          refetchQueries: [{
+            query: GET_PARTY_QUERY,
+            variables: { id: this.id }
+          }]
         })
-        // if no errors occured then add then update ui to reflect changes
-        if (suggestedSong.data.suggestSong.ok) {
-          queue.push(suggestedSong.data.suggestSong.suggested)
-          this.$set(
-            this.party,
-            'guests',
-            this.updateRequests(Array.from(this.party.guests))
-          )
-          this.$set(this.party, 'queue', queue)
-        } else {
-          // else an error has occured
-          this.$q.notify(alerts[0])
-        }
-      } else {
-        // if song is already in queue simple remove it from my list
-        this.remove(song)
       }
-    },
-    updateRequests (guests) {
-      const guestIndex = guests.findIndex(
-        g => g.user.userName === this.$store.getters.user.userName
-      )
-      if (guestIndex !== -1) {
-        guests[guestIndex].allowedRequests -= 1
-        return guests
-      }
-      return guests
     },
     async refreshSong (userName) {
       const currentSong = await this.$apollo.mutate({
@@ -186,6 +144,67 @@ export default {
       } else {
         this.$q.notify(alerts[1])
       }
+    },
+    async joinParty () {
+      await this.$apollo.mutate({
+        mutation: JOIN_PARTY_MUTATION,
+        variables: {
+          userName: this.party.host.userName
+        },
+        refetchQueries: [{
+          query: GET_PARTY_QUERY,
+          variables: { id: this.id }
+        }]
+      })
+    },
+    async likeSong (song, like) {
+      if (like) {
+        this.removeRating(song)
+      } else {
+        await this.$apollo.mutate({
+          mutation: RATE_SONG_MUTATION,
+          variables: {
+            like: true,
+            id: song.id,
+            partyId: this.party.id
+          },
+          refetchQueries: [{
+            query: GET_PARTY_QUERY,
+            variables: { id: this.id }
+          }]
+        })
+      }
+    },
+    async dislikeSong (song, dislike) {
+      if (dislike) {
+        this.removeRating(song)
+      } else {
+        await this.$apollo.mutate({
+          mutation: RATE_SONG_MUTATION,
+          variables: {
+            like: false,
+            id: song.id,
+            partyId: this.party.id
+          },
+          refetchQueries: [{
+            query: GET_PARTY_QUERY,
+            variables: { id: this.id }
+          }]
+        })
+      }
+    },
+    async removeRating (song) {
+      await this.$apollo.mutate({
+        mutation: REMOVE_RATING_MUTATION,
+        variables: {
+          id: song.id,
+          partyId: this.party.id
+        },
+        refetchQueries: [{
+          query: GET_PARTY_QUERY,
+          variables: { id: this.id }
+        }]
+      })
     }
   }
 }

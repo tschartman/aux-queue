@@ -28,7 +28,7 @@
         <q-item-section v-if="!host" avatar>
           <q-icon
             :color="liked(suggested) ? 'blue' : ''"
-            @click="$emit('likeAction', suggested)"
+            @click="$emit('likeAction', suggested, liked(suggested))"
             name="arrow_upward"
           >
             <q-tooltip>like</q-tooltip>
@@ -61,7 +61,7 @@
         <q-item-section v-if="!host" avatar>
           <q-icon
             :color="disliked(suggested) ? 'red' : ''"
-            @click="$emit('dislikeAction', suggested)"
+            @click="$emit('dislikeAction', suggested, disliked(suggested))"
             name="arrow_downward"
           >
             <q-tooltip>dislike</q-tooltip>

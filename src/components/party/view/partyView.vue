@@ -33,11 +33,7 @@ import { QScrollArea, QPullToRefresh } from 'quasar'
 import suggestedSongs from '../songs/suggestedSongs'
 import currentPlayback from '../playback/currentPlayback'
 import searchContainer from '../search/searchContainer'
-import {
-  RATE_SONG_MUTATION,
-  REMOVE_RATING_MUTATION,
-  JOIN_PARTY_MUTATION
-} from 'src/graphql/queries/partyQueries'
+
 const alerts = [
   {
     color: 'negative',
@@ -82,80 +78,11 @@ export default {
     }
   },
   methods: {
-    async joinParty () {
-      const joinParty = await this.$apollo.mutate({
-        mutation: JOIN_PARTY_MUTATION,
-        variables: {
-          userName: this.party.host.userName
-        }
-      })
-      if (joinParty.data.joinParty.ok) {
-        this.$emit('joinParty', joinParty.data.joinParty.party.guests)
-      } else {
-        this.$q.notify(alerts[2])
-      }
+    likeSong (song, like) {
+      this.$emit('likeSong', song, like)
     },
-    async likeSong (song) {
-      const user = this.$store.getters.user
-      if (song.rating.find(r => r.user.userName === user.userName && r.like)) {
-        const removeRating = await this.$apollo.mutate({
-          mutation: REMOVE_RATING_MUTATION,
-          variables: {
-            id: song.id,
-            partyId: this.party.id
-          }
-        })
-        if (removeRating.data.removeRating.ok) {
-          this.$emit('updateQueue', 'removeRating', song)
-        } else {
-          this.$q.notify(alerts[0])
-        }
-      } else {
-        const rateSong = await this.$apollo.mutate({
-          mutation: RATE_SONG_MUTATION,
-          variables: {
-            like: true,
-            id: song.id,
-            partyId: this.party.id
-          }
-        })
-        if (rateSong.data.rateSong.ok) {
-          this.$emit('updateQueue', 'likeSong', song)
-        } else {
-          this.$q.notify(alerts[0])
-        }
-      }
-    },
-    async dislikeSong (song) {
-      const user = this.$store.getters.user
-      if (song.rating.find(r => r.user.userName === user.userName && !r.like)) {
-        const removeRating = await this.$apollo.mutate({
-          mutation: REMOVE_RATING_MUTATION,
-          variables: {
-            id: song.id,
-            partyId: this.party.id
-          }
-        })
-        if (removeRating.data.removeRating.ok) {
-          this.$emit('updateQueue', 'removeRating', song)
-        } else {
-          this.$q.notify(alerts[0])
-        }
-      } else {
-        const rateSong = await this.$apollo.mutate({
-          mutation: RATE_SONG_MUTATION,
-          variables: {
-            like: false,
-            id: song.id,
-            partyId: this.party.id
-          }
-        })
-        if (rateSong.data.rateSong.ok) {
-          this.$emit('updateQueue', 'dislikeSong', song)
-        } else {
-          this.$q.notify(alerts[0])
-        }
-      }
+    dislikeSong (song, dislike) {
+      this.$emit('dislikeSong', song, dislike)
     },
     suggestSong (song) {
       if (this.songRequests > 0) {
