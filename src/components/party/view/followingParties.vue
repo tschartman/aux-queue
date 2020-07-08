@@ -3,6 +3,9 @@
     <div class="row justify-center">
       <h6>Parties</h6>
     </div>
+    <div class="row justify-center">
+      <q-btn @click="$emit('startParty')" flat color="primary">Start One!</q-btn>
+    </div>
     <q-scroll-area style="height: 550px;">
       <div class="row justify-center">
         <div

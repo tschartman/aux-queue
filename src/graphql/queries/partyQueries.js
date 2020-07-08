@@ -276,6 +276,9 @@ export const CREATE_PARTY_MUTATION = gql`
   mutation createParty {
     createParty {
       ok
+      party {
+        id
+      }
     }
   }
 `

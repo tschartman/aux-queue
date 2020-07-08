@@ -3,7 +3,7 @@
     <div class="row justify-center">
       <p v-if="findGuest && findGuest.status === 1" class="text-overline title">Requests Remaining: {{ songRequests }}</p>
       <p v-else-if="findGuest && findGuest.status === 0" class="text-overline title">Pending</p>
-      <q-btn v-else @click="joinParty" flat color="primary">Join Party</q-btn>
+      <q-btn v-else @click="$emit('joinParty')" flat color="primary">Join Party</q-btn>
     </div>
     <div class="q-pa-md" v-if="findGuest && findGuest.status === 1">
       <searchContainer @selectSong="suggestSong" />

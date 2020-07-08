@@ -35,7 +35,6 @@ import {
   GET_PARTY_QUERY,
   SUGGEST_SONG_MUTATION,
   LEAVE_PARTY_MUTATION,
-  SHUT_DOWN_PARTY_MUTATION,
   REFRESH_CURRENT_SONG,
   RATE_SONG_MUTATION,
   REMOVE_RATING_MUTATION,
@@ -83,7 +82,6 @@ export default {
   },
   methods: {
     async suggestSong (song) {
-      const queue = Array.from(this.party.queue)
       const newSong = {
         id: this.party.id,
         title: song.name,
@@ -92,7 +90,7 @@ export default {
         coverUri: song.album.images[0].url,
         songUri: song.uri
       }
-      if (queue.findIndex(s => s.song.songUri === newSong.songUri) === -1) {
+      if (this.queue.findIndex(s => s.song.songUri === song.uri) === -1) {
         await this.$apollo.mutate({
           mutation: SUGGEST_SONG_MUTATION,
           variables: { input: newSong },
@@ -126,14 +124,7 @@ export default {
       this.$set(this.party, 'queue', songs)
     },
     async shutDownParty () {
-      const shutDownParty = await this.$apollo.mutate({
-        mutation: SHUT_DOWN_PARTY_MUTATION
-      })
-      if (shutDownParty.data.shutDownParty.ok) {
-        this.$emit('changeView')
-      } else {
-        this.$q.notify(alerts[1])
-      }
+      this.$emit('shutDownParty')
     },
     async leaveParty () {
       const leaveParty = await this.$apollo.mutate({
@@ -145,8 +136,8 @@ export default {
         this.$q.notify(alerts[1])
       }
     },
-    async joinParty () {
-      await this.$apollo.mutate({
+    joinParty () {
+      this.$apollo.mutate({
         mutation: JOIN_PARTY_MUTATION,
         variables: {
           userName: this.party.host.userName
