@@ -19,7 +19,6 @@
         <party
           :id="id === null ? parties[0].id : id"
           @switchTab='switchTab'
-          @refreshParty='refreshParty'
           @shutDownParty='shutDownParty'
         />
       </q-tab-panel>
@@ -38,7 +37,9 @@
 import {
   GET_PARTIES_QUERY,
   SHUT_DOWN_PARTY_MUTATION,
-  CREATE_PARTY_MUTATION
+  CREATE_PARTY_MUTATION,
+  PARTY_CREATED_SUBSCRIPTION,
+  PARTY_DELETED_SUBSCRIPTION
 } from 'src/graphql/queries/partyQueries'
 import { QTabPanel, QTabPanels } from 'quasar'
 import followingParties from 'components/party/view/followingParties'
@@ -62,7 +63,30 @@ export default {
   apollo: {
     parties: {
       query: GET_PARTIES_QUERY,
-      pollInterval: 1000
+      subscribeToMore: [{
+        document: PARTY_CREATED_SUBSCRIPTION,
+        updateQuery: (previousResult, { subscriptionData }) => {
+          if (previousResult.parties.find(party => party.id === subscriptionData.data.partyCreated.id)) {
+            return previousResult
+          }
+          return {
+            parties: [
+              ...previousResult.parties,
+              subscriptionData.data.partyCreated
+            ]
+          }
+        }
+      },
+      {
+        document: PARTY_DELETED_SUBSCRIPTION,
+        updateQuery: (previousResult, { subscriptionData }) => {
+          return {
+            parties: [
+              ...previousResult.parties.filter(party => party.id !== subscriptionData.data.partyDeleted.id)
+            ]
+          }
+        }
+      }]
     }
   },
   methods: {

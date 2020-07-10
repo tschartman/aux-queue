@@ -38,7 +38,8 @@ import {
   REFRESH_CURRENT_SONG,
   RATE_SONG_MUTATION,
   REMOVE_RATING_MUTATION,
-  JOIN_PARTY_MUTATION
+  JOIN_PARTY_MUTATION,
+  PARTY_UPDATED_SUBSCRIPTION
 } from 'src/graphql/queries/partyQueries'
 import partyView from 'components/party/view/partyView'
 import partyHostView from 'components/party/view/partyHostView'
@@ -78,7 +79,15 @@ export default {
           id: this.id
         }
       },
-      pollInterval: 1000
+      subscribeToMore: {
+        document: PARTY_UPDATED_SUBSCRIPTION,
+        variables () {
+          return {
+            id: this.id
+          }
+        }
+      }
+      // pollInterval: 1000
     }
   },
   methods: {

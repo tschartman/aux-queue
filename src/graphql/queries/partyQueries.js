@@ -33,6 +33,13 @@ export const PARTY_CREATED_SUBSCRIPTION = gql`
       host {
         userName
       }
+      guests {
+        id
+        status
+        user {
+          userName
+        }
+      }
     }
   }
 `
@@ -50,9 +57,6 @@ export const PARTY_UPDATED_SUBSCRIPTION = gql`
     partyUpdated(id: $id) {
       id
       name
-      currentlyPlaying {
-        coverUri
-      }
       host {
         userName
       }
@@ -66,6 +70,28 @@ export const PARTY_UPDATED_SUBSCRIPTION = gql`
           firstName
           lastName
           userImage
+        }
+      }
+      currentlyPlaying {
+        title
+        artist
+        album
+        coverUri
+      }
+      queue {
+        id
+        song {
+          title
+          album
+          artist
+          coverUri
+          songUri
+        }
+        rating {
+          user {
+            userName
+          }
+          like
         }
       }
     }
