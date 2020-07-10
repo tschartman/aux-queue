@@ -77,7 +77,8 @@ export default {
         return {
           id: this.id
         }
-      }
+      },
+      pollInterval: 1000
     }
   },
   methods: {
@@ -102,21 +103,10 @@ export default {
       }
     },
     async refreshSong (userName) {
-      const currentSong = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: REFRESH_CURRENT_SONG,
         variables: { userName: userName }
       })
-      if (currentSong.data.refreshCurrentSong.ok) {
-        if (this.party) {
-          this.party.currentlyPlaying =
-            currentSong.data.refreshCurrentSong.currentSong
-          this.$emit(
-            'refreshParty',
-            this.party.id,
-            currentSong.data.refreshCurrentSong.currentSong
-          )
-        }
-      }
     },
     removeSong (song) {
       let songs = Array.from(this.party.queue)

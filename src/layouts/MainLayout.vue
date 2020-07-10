@@ -2,7 +2,7 @@
   <div class="test">
     <q-layout view="lHh Lpr lFf">
       <q-header elevated>
-        <q-toolbar class="bg-grey-3 text-white">
+        <q-toolbar :class="this.$q.dark.mode ? 'bg-grey-9' : 'bg-grey-3'">
           <q-btn
             flat
             dense
@@ -16,10 +16,7 @@
           <q-toolbar-title>
             <img height="35px" width="140px" src='../statics/AuxQueue-logo.png' />
           </q-toolbar-title>
-          <q-toolbar-title>
-            <q-toggle v-model="value" />
-            Dark Mode
-          </q-toolbar-title>
+          <q-toggle v-model="value" />
           <q-btn
             flat
             color="black"
@@ -34,7 +31,7 @@
         v-model="leftDrawerOpen"
         show-if-above
         bordered
-        content-class="bg-grey-2"
+        :content-class="this.$q.dark.mode ? 'bg-grey-9' : 'bg-grey-3'"
       >
         <q-list>
           <q-item-label header>Options</q-item-label>

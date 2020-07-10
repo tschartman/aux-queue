@@ -19,6 +19,7 @@ const getDefaultState = () => {
     sauth: false,
     spotify_token: null,
     spotify_refresh: null,
+    party: false,
     user: {},
     sUser: {}
   }
@@ -57,6 +58,12 @@ const Store = new Vuex.Store({
       state.auth = true
       state.token = token
     },
+    start_party (state) {
+      state.party = true
+    },
+    shut_down_party (state) {
+      state.party = false
+    },
     set_user (state, user) {
       state.user = user
     },
@@ -83,6 +90,12 @@ const Store = new Vuex.Store({
         token: data.access_token,
         refresh: data.refresh_token
       })
+    },
+    startParty ({ commit }) {
+      commit('start_party')
+    },
+    shutDownParty ({ commit }) {
+      commit('shut_down_party')
     },
     linkSpotifyUser ({ commit }, data) {
       commit('set_spotify_user', data)
@@ -128,7 +141,8 @@ const Store = new Vuex.Store({
     spotifyToken: state => state.spotify_token,
     spotifyRefresh: state => state.spotify_refresh,
     user: state => state.user,
-    sUser: state => state.sUser
+    sUser: state => state.sUser,
+    party: state => state.party
   }
 
   // enable strict mode (adds overhead!)

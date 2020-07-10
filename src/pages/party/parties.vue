@@ -37,7 +37,6 @@
 <script>
 import {
   GET_PARTIES_QUERY,
-  // JOIN_PARTY_MUTATION,
   SHUT_DOWN_PARTY_MUTATION,
   CREATE_PARTY_MUTATION
 } from 'src/graphql/queries/partyQueries'
@@ -62,7 +61,8 @@ export default {
   },
   apollo: {
     parties: {
-      query: GET_PARTIES_QUERY
+      query: GET_PARTIES_QUERY,
+      pollInterval: 1000
     }
   },
   methods: {
@@ -75,6 +75,7 @@ export default {
       }
     },
     shutDownParty () {
+      this.$store.dispatch('shutDownParty')
       this.$apollo.mutate({
         mutation: SHUT_DOWN_PARTY_MUTATION,
         refetchQueries: [{
@@ -87,6 +88,7 @@ export default {
       })
     },
     async startParty () {
+      this.$store.dispatch('startParty')
       this.$apollo.mutate({
         mutation: CREATE_PARTY_MUTATION,
         refetchQueries: [{
@@ -97,14 +99,6 @@ export default {
           this.tab = 'party'
         }
       })
-    },
-    refreshParty (id, currentlyPlaying) {
-      const parties = Array.from(this.parties)
-      const partyIndex = parties.findIndex(p => p.id === id)
-      if (partyIndex !== -1) {
-        parties[partyIndex].currentlyPlaying = currentlyPlaying
-        this.parties = parties
-      }
     }
   }
 }
