@@ -34,7 +34,10 @@ import {
   REMOVE_FOLLOW_MUTATION,
   REMOVE_FOLLOWER_MUTATION,
   GET_FOLLOWER_QUERY,
-  GET_FOLLOW_QUERY
+  GET_FOLLOW_QUERY,
+  RELATIONSHIP_UPDATED_SUBSCRIPTION,
+  RELATIONSHIP_DELETED_SUBSCRIPTION,
+  RELATIONSHIP_CREATED_SUBSCRIPTION
 } from 'src/graphql/queries/followerQueries'
 import userView from 'src/components/social/users/userView'
 import follow from 'src/components/social/menu/follow'
@@ -57,19 +60,69 @@ export default {
       query: GET_FOLLOW_QUERY,
       variables () {
         return {
-          userName: this.user ? this.user.userName : ''
+          userName: this.user.userName
         }
       },
-      update: data => data.follow
+      update: data => data.follow,
+      subscribeToMore: [{
+        document: RELATIONSHIP_UPDATED_SUBSCRIPTION,
+        variables () {
+          return { id: this.following ? this.following.id : 0 }
+        }
+      },
+      {
+        document: RELATIONSHIP_DELETED_SUBSCRIPTION,
+        variables () {
+          return { id: this.following ? this.following.id : 0 }
+        },
+        updateQuery: (previousResult, { subscriptionData }) => {
+          return {
+            following: null
+          }
+        }
+      },
+      {
+        document: RELATIONSHIP_CREATED_SUBSCRIPTION,
+        updateQuery: function (previousResult, { subscriptionData }) {
+          if (subscriptionData.data.relationshipCreated.following.userName === this.user.userName && subscriptionData.data.relationshipCreated.follower.userName === this.$store.getters.user.userName) {
+            return { follower: subscriptionData.data.relationshipCreated }
+          }
+        }
+      }]
     },
     follower: {
       query: GET_FOLLOWER_QUERY,
       variables () {
         return {
-          userName: this.user ? this.user.userName : ''
+          userName: this.user.userName
         }
       },
-      update: data => data.follower
+      update: data => data.follower,
+      subscribeToMore: [{
+        document: RELATIONSHIP_UPDATED_SUBSCRIPTION,
+        variables () {
+          return { id: this.follower ? this.follower.id : 0 }
+        }
+      },
+      {
+        document: RELATIONSHIP_DELETED_SUBSCRIPTION,
+        variables () {
+          return { id: this.follower ? this.follower.id : 0 }
+        },
+        updateQuery: (previousResult, { subscriptionData }) => {
+          return {
+            follower: null
+          }
+        }
+      },
+      {
+        document: RELATIONSHIP_CREATED_SUBSCRIPTION,
+        updateQuery: function (previousResult, { subscriptionData }) {
+          if (subscriptionData.data.relationshipCreated.follower.userName === this.user.userName && subscriptionData.data.relationshipCreated.following.userName === this.$store.getters.user.userName) {
+            return { follower: subscriptionData.data.relationshipCreated }
+          }
+        }
+      }]
     }
   },
   methods: {

@@ -16,6 +16,46 @@ export const GET_FOLLOWERS_QUERY = gql`
   }
 `
 
+export const RELATIONSHIP_CREATED_SUBSCRIPTION = gql`
+  subscription relationshipUpdated {
+    relationshipCreated {
+      id
+      status
+      follower {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+      following {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+    }
+  }
+`
+
+export const RELATIONSHIP_UPDATED_SUBSCRIPTION = gql`
+  subscription relationshipUpdated($id: ID!) {
+    relationshipUpdated(id: $id){
+      id
+      status
+    }
+  }
+`
+export const RELATIONSHIP_DELETED_SUBSCRIPTION = gql`
+  subscription relationshipDeleted($id: ID!) {
+    relationshipDeleted(id: $id){
+      id
+      status
+    }
+  }
+`
+
 export const GET_FOLLOWING_QUERY = gql`
   query getFollowing {
     following {
