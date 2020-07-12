@@ -39,7 +39,8 @@ import {
   RATE_SONG_MUTATION,
   REMOVE_RATING_MUTATION,
   JOIN_PARTY_MUTATION,
-  PARTY_UPDATED_SUBSCRIPTION
+  PARTY_UPDATED_SUBSCRIPTION,
+  PARTY_DELETED_SUBSCRIPTION
 } from 'src/graphql/queries/partyQueries'
 import partyView from 'components/party/view/partyView'
 import partyHostView from 'components/party/view/partyHostView'
@@ -79,15 +80,23 @@ export default {
           id: this.id
         }
       },
-      subscribeToMore: {
+      subscribeToMore: [{
         document: PARTY_UPDATED_SUBSCRIPTION,
         variables () {
           return {
             id: this.id
           }
         }
-      }
-      // pollInterval: 1000
+      },
+      {
+        document: PARTY_DELETED_SUBSCRIPTION,
+        updateQuery: function (previousResult, { subscriptionData }) {
+          if (subscriptionData.data.partyDeleted.id === this.id) {
+            this.party = null
+            this.$emit('switchTab', 'parties')
+          }
+        }
+      }]
     }
   },
   methods: {
