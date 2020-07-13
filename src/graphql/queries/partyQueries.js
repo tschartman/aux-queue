@@ -21,10 +21,31 @@ export const GET_PARTIES_QUERY = gql`
     }
   }
 `
+export const PARTIES_UPDATED_SUBSCRIPTION = gql`
+  subscription partiesUpdated($userName: String!) {
+    partiesUpdated(userName: $userName) {
+      id
+      name
+      currentlyPlaying {
+        coverUri
+      }
+      host {
+        userName
+      }
+      guests {
+        id
+        status
+        user {
+          userName
+        }
+      }
+    }
+  }
+`
 
 export const PARTY_CREATED_SUBSCRIPTION = gql`
-  subscription partyCreated {
-    partyCreated {
+  subscription partyCreated($userName: String!) {
+    partyCreated(userName: $userName) {
       id
       name
       currentlyPlaying {
@@ -45,8 +66,8 @@ export const PARTY_CREATED_SUBSCRIPTION = gql`
 `
 
 export const PARTY_DELETED_SUBSCRIPTION = gql`
-  subscription partyDeleted {
-    partyDeleted {
+  subscription partyDeleted($userName: String!) {
+    partyDeleted(userName: $userName) {
       id
     }
   }

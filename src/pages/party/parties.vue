@@ -39,7 +39,8 @@ import {
   SHUT_DOWN_PARTY_MUTATION,
   CREATE_PARTY_MUTATION,
   PARTY_CREATED_SUBSCRIPTION,
-  PARTY_DELETED_SUBSCRIPTION
+  PARTY_DELETED_SUBSCRIPTION,
+  PARTIES_UPDATED_SUBSCRIPTION
 } from 'src/graphql/queries/partyQueries'
 import { QTabPanel, QTabPanels } from 'quasar'
 import followingParties from 'components/party/view/followingParties'
@@ -65,6 +66,9 @@ export default {
       query: GET_PARTIES_QUERY,
       subscribeToMore: [{
         document: PARTY_CREATED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
         updateQuery: (previousResult, { subscriptionData }) => {
           if (previousResult.parties.find(party => party.id === subscriptionData.data.partyCreated.id)) {
             return previousResult
@@ -79,12 +83,21 @@ export default {
       },
       {
         document: PARTY_DELETED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
         updateQuery: (previousResult, { subscriptionData }) => {
           return {
             parties: [
               ...previousResult.parties.filter(party => party.id !== subscriptionData.data.partyDeleted.id)
             ]
           }
+        }
+      },
+      {
+        document: PARTIES_UPDATED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
         }
       }]
     }

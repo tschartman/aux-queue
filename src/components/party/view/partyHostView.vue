@@ -129,7 +129,8 @@ export default {
       })
     },
     playSong (song) {
-      spotifyApi.put('/me/player/play', { uris: [song.songUri] })
+      this.removeSong(song)
+      spotifyApi.put('/me/player/play', { uris: [song.song.songUri] })
     },
     pullRefreshSong (done) {
       this.$emit('refreshSong', this.party.host.userName, done)

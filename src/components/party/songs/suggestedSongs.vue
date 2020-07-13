@@ -51,7 +51,7 @@
         </q-item-section>
         <q-item-section v-if="host" avatar>
           <q-icon
-            @click="$emit('playAction', suggested.song)"
+            @click="$emit('playAction', suggested)"
             name="playlist_add"
             color="blue"
           >

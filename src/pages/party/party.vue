@@ -90,6 +90,9 @@ export default {
       },
       {
         document: PARTY_DELETED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
         updateQuery: function (previousResult, { subscriptionData }) {
           if (subscriptionData.data.partyDeleted.id === this.id) {
             this.party = null
