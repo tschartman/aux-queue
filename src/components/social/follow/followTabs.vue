@@ -32,7 +32,10 @@ import followingList from 'src/components/social/follow/followingList'
 import {
   GET_FOLLOWERS_QUERY,
   GET_FOLLOWING_QUERY,
-  UPDATE_FOLLOWER_MUTATION
+  UPDATE_FOLLOWER_MUTATION,
+  RELATIONSHIP_CREATED_SUBSCRIPTION,
+  RELATIONSHIPS_UPDATED_SUBSCRIPTION,
+  RELATIONSHIPS_DELETED_SUBSCRIPTION
 } from 'src/graphql/queries/followerQueries'
 export default {
   props: {
@@ -55,11 +58,75 @@ export default {
   apollo: {
     following: {
       query: GET_FOLLOWING_QUERY,
-      update: data => data.following.filter(f => f.status === 1)
+      update: data => data.following.filter(f => f.status === 1),
+      subscribeToMore: [{
+        document: RELATIONSHIPS_DELETED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
+        updateQuery: function (previousResult, { subscriptionData }) {
+          if (subscriptionData.data.relationshipsDeleted.follower.userName === this.$store.getters.user.userName) {
+            return {
+              following: previousResult.following.filter(following => following.id !== subscriptionData.data.relationshipsDeleted.id)
+            }
+          }
+        }
+      },
+      {
+        document: RELATIONSHIPS_UPDATED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
+        updateQuery: function (previousResult, { subscriptionData }) {
+          if (subscriptionData.data.relationshipsUpdated.follower.userName === this.$store.getters.user.userName) {
+            if (previousResult.following.find(following => following.id === subscriptionData.data.relationshipsUpdated.id)) {
+              return previousResult
+            }
+            return {
+              following: [
+                ...previousResult.following,
+                subscriptionData.data.relationshipsUpdated
+              ]
+            }
+          }
+        }
+      }]
     },
     followers: {
       query: GET_FOLLOWERS_QUERY,
-      update: data => data.followers.filter(f => f.status !== 3)
+      update: data => data.followers.filter(f => f.status !== 3),
+      subscribeToMore: [{
+        document: RELATIONSHIPS_DELETED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
+        updateQuery: function (previousResult, { subscriptionData }) {
+          if (subscriptionData.data.relationshipsDeleted.following.userName === this.$store.getters.user.userName) {
+            return {
+              followers: previousResult.followers.filter(follower => follower.id !== subscriptionData.data.relationshipsDeleted.id)
+            }
+          }
+        }
+      },
+      {
+        document: RELATIONSHIP_CREATED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
+        updateQuery: function (previousResult, { subscriptionData }) {
+          if (subscriptionData.data.relationshipCreated.following.userName === this.$store.getters.user.userName) {
+            if (previousResult.followers.find(follower => follower.id === subscriptionData.data.relationshipCreated.id)) {
+              return previousResult
+            }
+            return {
+              followers: [
+                ...previousResult.followers,
+                subscriptionData.data.relationshipCreated
+              ]
+            }
+          }
+        }
+      }]
     }
   },
   methods: {

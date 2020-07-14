@@ -17,8 +17,8 @@ export const GET_FOLLOWERS_QUERY = gql`
 `
 
 export const RELATIONSHIP_CREATED_SUBSCRIPTION = gql`
-  subscription relationshipUpdated {
-    relationshipCreated {
+  subscription relationshipCreated($userName: String!) {
+    relationshipCreated(userName: $userName) {
       id
       status
       follower {
@@ -47,11 +47,56 @@ export const RELATIONSHIP_UPDATED_SUBSCRIPTION = gql`
     }
   }
 `
+export const RELATIONSHIPS_UPDATED_SUBSCRIPTION = gql`
+  subscription relationshipsUpdated($userName: String!) {
+    relationshipsUpdated(userName: $userName){
+      id
+      status
+      follower {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+      following {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+    }
+  }
+`
+
 export const RELATIONSHIP_DELETED_SUBSCRIPTION = gql`
   subscription relationshipDeleted($id: ID!) {
     relationshipDeleted(id: $id){
       id
       status
+    }
+  }
+`
+export const RELATIONSHIPS_DELETED_SUBSCRIPTION = gql`
+  subscription relationshipsDeleted($userName: String!) {
+    relationshipsDeleted(userName: $userName){
+      id
+      status
+      follower {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+      following {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
     }
   }
 `

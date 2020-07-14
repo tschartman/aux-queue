@@ -83,6 +83,9 @@ export default {
       },
       {
         document: RELATIONSHIP_CREATED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
         updateQuery: function (previousResult, { subscriptionData }) {
           if (subscriptionData.data.relationshipCreated.following.userName === this.user.userName && subscriptionData.data.relationshipCreated.follower.userName === this.$store.getters.user.userName) {
             return { follower: subscriptionData.data.relationshipCreated }
@@ -117,6 +120,9 @@ export default {
       },
       {
         document: RELATIONSHIP_CREATED_SUBSCRIPTION,
+        variables () {
+          return { userName: this.$store.getters.user.userName }
+        },
         updateQuery: function (previousResult, { subscriptionData }) {
           if (subscriptionData.data.relationshipCreated.follower.userName === this.user.userName && subscriptionData.data.relationshipCreated.following.userName === this.$store.getters.user.userName) {
             return { follower: subscriptionData.data.relationshipCreated }
