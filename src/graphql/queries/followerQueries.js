@@ -121,6 +121,13 @@ export const GET_FOLLOW_QUERY = gql`
     follow(userName: $userName) {
       id
       status
+      follower {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
       following {
         userName
         firstName
@@ -137,6 +144,13 @@ export const GET_FOLLOWER_QUERY = gql`
       id
       status
       follower {
+        userName
+        firstName
+        lastName
+        email
+        accessToken
+      }
+      following {
         userName
         firstName
         lastName

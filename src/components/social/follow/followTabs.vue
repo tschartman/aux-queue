@@ -79,14 +79,20 @@ export default {
         },
         updateQuery: function (previousResult, { subscriptionData }) {
           if (subscriptionData.data.relationshipsUpdated.follower.userName === this.$store.getters.user.userName) {
-            if (previousResult.following.find(following => following.id === subscriptionData.data.relationshipsUpdated.id)) {
-              return previousResult
-            }
-            return {
-              following: [
-                ...previousResult.following,
-                subscriptionData.data.relationshipsUpdated
-              ]
+            if (subscriptionData.data.relationshipsUpdated.status === 1) {
+              if (previousResult.following.find(following => following.id === subscriptionData.data.relationshipsUpdated.id)) {
+                return previousResult
+              }
+              return {
+                following: [
+                  ...previousResult.following,
+                  subscriptionData.data.relationshipsUpdated
+                ]
+              }
+            } else if (subscriptionData.data.relationshipsUpdated.status > 1) {
+              return {
+                following: previousResult.following.filter(f => f.following.userName !== subscriptionData.data.relationshipsUpdated.following.userName)
+              }
             }
           }
         }
