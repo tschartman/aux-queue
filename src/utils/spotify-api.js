@@ -1,6 +1,9 @@
 import axios from 'axios'
 import Store from 'src/store'
-import { appApi } from 'src/utils/app-api'
+import { apolloClient } from './apollo'
+import {
+  SPOTIFY_REFRESH_MUTATION
+} from 'src/graphql/queries/authQueries'
 
 export const spotifyApi = axios.create({
   baseURL: 'https://api.spotify.com/v1'
@@ -40,28 +43,18 @@ spotifyApi.interceptors.response.use(
   async function (error) {
     const originalRequest = error.config
     if (error.response.status === 401) {
-      if (
-        Store.getters.spotifyToken !== undefined &&
-        Store.getters.spotifyToken != null
-      ) {
-        if (!isAlreadyFetchingAccessToken) {
-          const refreshToken = Store.getters.spotifyRefresh
-          isAlreadyFetchingAccessToken = true
-          const refresh = await appApi.post('/spotify/refresh', {
-            token: refreshToken
-          })
-
-          isAlreadyFetchingAccessToken = false
-          onAccessTokenFetched(refresh.data.accessToken)
-          const data = {
-            accessToken: refresh.data.accessToken,
-            refresh_token: refreshToken
-          }
-
-          Store.dispatch('linkSpotify', data)
+      if (!isAlreadyFetchingAccessToken) {
+        isAlreadyFetchingAccessToken = true
+        const refreshed = await apolloClient.mutate({
+          mutation: SPOTIFY_REFRESH_MUTATION
+        })
+        isAlreadyFetchingAccessToken = false
+        onAccessTokenFetched(refreshed.data.refreshTokens.user.refreshToken)
+        const data = {
+          access_token: refreshed.data.refreshTokens.user.accessToken,
+          refresh_token: refreshed.data.refreshTokens.user.refreshToken
         }
-      } else {
-        return Promise.reject({ error: 'No spotify token set' })
+        Store.dispatch('linkSpotify', data)
       }
 
       const retryOriginalRequest = new Promise(resolve => {

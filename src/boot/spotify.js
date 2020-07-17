@@ -52,7 +52,6 @@ spotifyApi.interceptors.response.use(
           const refresh = await appApi.post('/spotify/refresh', {
             token: refreshToken
           })
-
           isAlreadyFetchingAccessToken = false
           onAccessTokenFetched(refresh.data.accessToken)
           const data = {
@@ -73,6 +72,8 @@ spotifyApi.interceptors.response.use(
         })
       })
       return retryOriginalRequest
+    } else if (error.response.status === 401) {
+      console.log('here')
     }
 
     return Promise.reject(error)

@@ -25,19 +25,23 @@
           >{{ suggested.song.title }} -
           {{ suggested.song.artist }}</q-item-section
         >
-        <q-item-section v-if="!host" avatar>
-          <q-icon
-            :color="liked(suggested) ? 'blue' : ''"
-            @click="$emit('likeAction', suggested, liked(suggested))"
-            name="arrow_upward"
-          >
-            <q-tooltip>like</q-tooltip>
-          </q-icon>
-        </q-item-section>
-        <q-item-section avatar>
-          <div class="text-subtitle2">
-            {{ score(suggested) }}
-            <q-tooltip>rating</q-tooltip>
+        <q-item-section v-if="!host" top side>
+          <div class="q-gutter-sm flex">
+            <q-icon
+              :color="liked(suggested) ? 'blue' : ''"
+              @click="$emit('likeAction', suggested, liked(suggested))"
+              name="arrow_upward"
+              size="md"
+            >
+            </q-icon>
+            <span class="text-h6 q-px-sm">{{ score(suggested) }}<q-tooltip>rating</q-tooltip></span>
+            <q-icon
+              :color="disliked(suggested) ? 'red' : ''"
+              @click="$emit('dislikeAction', suggested, disliked(suggested))"
+              name="arrow_downward"
+              size="md"
+            >
+            </q-icon>
           </div>
         </q-item-section>
         <q-item-section v-if="host" avatar>
@@ -56,15 +60,6 @@
             color="blue"
           >
             <q-tooltip>Add To Plalist</q-tooltip>
-          </q-icon>
-        </q-item-section>
-        <q-item-section v-if="!host" avatar>
-          <q-icon
-            :color="disliked(suggested) ? 'red' : ''"
-            @click="$emit('dislikeAction', suggested, disliked(suggested))"
-            name="arrow_downward"
-          >
-            <q-tooltip>dislike</q-tooltip>
           </q-icon>
         </q-item-section>
       </q-item>
