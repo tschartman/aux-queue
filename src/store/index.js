@@ -11,6 +11,7 @@ appApi.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 const getDefaultState = () => {
   return {
+    page: 'home',
     status: 'pending',
     expires_in: null,
     token: null,
@@ -58,6 +59,9 @@ const Store = new Vuex.Store({
       state.auth = true
       state.token = token
     },
+    navigate (state, page) {
+      state.page = page
+    },
     start_party (state) {
       state.party = true
     },
@@ -90,6 +94,9 @@ const Store = new Vuex.Store({
         token: data.access_token,
         refresh: data.refresh_token
       })
+    },
+    navigate ({ commit }, page) {
+      commit('navigate', page)
     },
     startParty ({ commit }) {
       commit('start_party')
@@ -142,7 +149,8 @@ const Store = new Vuex.Store({
     spotifyRefresh: state => state.spotify_refresh,
     user: state => state.user,
     sUser: state => state.sUser,
-    party: state => state.party
+    party: state => state.party,
+    page: state => state.page
   }
 
   // enable strict mode (adds overhead!)

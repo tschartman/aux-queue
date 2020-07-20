@@ -37,7 +37,7 @@
           <q-item-label header>Options</q-item-label>
           <div v-if="$store.getters.isLoggedIn">
             <q-item
-              :active="page === 'home'"
+              :active="$store.getters.page === 'home'"
               clickable
               v-on:click="navigate('home')"
             >
@@ -48,7 +48,7 @@
                 <q-item-label>AuxQueue</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item :active="page === 'social'" clickable v-on:click="navigate('social')">
+            <q-item :active="$store.getters.page === 'social'" clickable v-on:click="navigate('social')">
               <q-item-section avatar>
                 <q-icon name="group_add" />
               </q-item-section>
@@ -56,7 +56,7 @@
                 <q-item-label>Social</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item :active="page === 'me'" clickable v-on:click="navigate('me')">
+            <q-item :active="$store.getters.page === 'me'" clickable v-on:click="navigate('me')">
               <q-item-section avatar>
                 <q-icon name="person" />
               </q-item-section>
@@ -118,7 +118,6 @@ export default {
   },
   data () {
     return {
-      page: 'home',
       leftDrawerOpen: false,
       playlists: [],
       model: null,
@@ -137,10 +136,10 @@ export default {
       if (this.page === page) {
         this.leftDrawerOpen = false
       } else if (page === 'home') {
-        this.page = page
+        this.$store.dispatch('navigate', 'home')
         this.$router.push('/')
       } else {
-        this.page = page
+        this.$store.dispatch('navigate', page)
         this.$router.push(page)
       }
     },

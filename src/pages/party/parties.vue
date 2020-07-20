@@ -44,6 +44,7 @@ import {
 } from 'src/graphql/queries/partyQueries'
 import { QTabPanel, QTabPanels } from 'quasar'
 import followingParties from 'components/party/view/followingParties'
+import createPartyForm from 'src/modals/createPartyForm'
 import party from 'src/pages/party/party'
 export default {
   name: 'Parties',
@@ -125,16 +126,22 @@ export default {
       })
     },
     async startParty () {
-      this.$store.dispatch('startParty')
-      this.$apollo.mutate({
-        mutation: CREATE_PARTY_MUTATION,
-        refetchQueries: [{
-          query: GET_PARTIES_QUERY
-        }],
-        update: (cache, { data: { createParty } }) => {
-          this.id = createParty.party.id
-          this.tab = 'party'
-        }
+      this.$q.dialog({
+        component: createPartyForm,
+        parent: this
+      }).onOk((data) => {
+        this.$store.dispatch('startParty')
+        this.$apollo.mutate({
+          mutation: CREATE_PARTY_MUTATION,
+          variables: data,
+          refetchQueries: [{
+            query: GET_PARTIES_QUERY
+          }],
+          update: (cache, { data: { createParty } }) => {
+            this.id = createParty.party.id
+            this.tab = 'party'
+          }
+        })
       })
     }
   }

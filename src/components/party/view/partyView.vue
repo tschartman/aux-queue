@@ -69,7 +69,7 @@ export default {
   computed: {
     songRequests () {
       const guest = this.findGuest
-      return guest ? guest.allowedRequests - guest.amountRequested : null
+      return this.party.limitRequests ? (guest ? guest.allowedRequests - guest.amountRequested : null) : 'Unlimited'
     },
     findGuest () {
       return this.party.guests.find(
@@ -85,7 +85,7 @@ export default {
       this.$emit('dislikeSong', song, dislike)
     },
     suggestSong (song) {
-      if (this.songRequests > 0) {
+      if (!this.party.limitRequests || this.songRequests > 0) {
         this.$emit('suggestSong', song)
       } else {
         this.$q.notify(alerts[1])

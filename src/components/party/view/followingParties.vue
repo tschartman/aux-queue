@@ -14,7 +14,7 @@
           :key="party.host.userName"
         >
           <div class="row justify-center text-subtitle2">
-            {{ party.host.userName }}'s party
+            {{party.name ? party.name : `${party.host.userName} 's Party` }}
           </div>
           <q-card class="party-card"
            @click="$emit('switchTab', 'party', party.id)"

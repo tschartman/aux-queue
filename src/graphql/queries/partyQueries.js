@@ -5,6 +5,7 @@ export const GET_PARTIES_QUERY = gql`
     parties {
       id
       name
+      limitRequests
       currentlyPlaying {
         coverUri
       }
@@ -26,6 +27,7 @@ export const PARTIES_UPDATED_SUBSCRIPTION = gql`
     partiesUpdated(userName: $userName) {
       id
       name
+      limitRequests
       currentlyPlaying {
         coverUri
       }
@@ -48,6 +50,7 @@ export const PARTY_CREATED_SUBSCRIPTION = gql`
     partyCreated(userName: $userName) {
       id
       name
+      limitRequests
       currentlyPlaying {
         coverUri
       }
@@ -78,6 +81,7 @@ export const PARTY_UPDATED_SUBSCRIPTION = gql`
     partyUpdated(id: $id) {
       id
       name
+      limitRequests
       host {
         userName
       }
@@ -124,6 +128,7 @@ export const GET_PARTY_QUERY = gql`
     party(id: $id) {
       id
       name
+      limitRequests
       host {
         userName
       }
@@ -236,6 +241,7 @@ export const ALLOW_IN_PARTY_MUTATION = gql`
     allowInParty(input: { id: $id }) {
       ok
       party {
+        limitRequests
         guests {
           id
           status
@@ -258,6 +264,7 @@ export const REMOVE_FROM_PARTY_MUTATION = gql`
     removeFromParty(input: { id: $id }) {
       ok
       party {
+        limitRequests
         guests {
           id
           status
@@ -302,6 +309,7 @@ export const JOIN_PARTY_MUTATION = gql`
     joinParty(input: { userName: $userName }) {
       ok
       party {
+        limitRequests
         guests {
           id
           status
@@ -320,8 +328,8 @@ export const JOIN_PARTY_MUTATION = gql`
 `
 
 export const CREATE_PARTY_MUTATION = gql`
-  mutation createParty {
-    createParty {
+  mutation createParty($name: String!, $limit: Boolean!, $requests: Int!) {
+    createParty(input: { name: $name, limit: $limit, requests: $requests }) {
       ok
       party {
         id

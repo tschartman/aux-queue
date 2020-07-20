@@ -8,7 +8,7 @@
         color="blue"
         size="xl"
       />
-      <h5 class="title">{{ party.host.userName }}'s Party</h5>
+      <h5 class="title party-label">{{party.name ? party.name : `${party.host.userName} 's Party` }}</h5>
     </div>
     <partyHostView
       v-if="$store.getters.user.userName === party.host.userName"
@@ -217,6 +217,11 @@ export default {
   margin: auto;
   text-align: center;
 }
+
+.party-label {
+  padding-right: 46px;
+}
+
 .clickable {
   cursor: pointer;
 }
