@@ -34,7 +34,7 @@
               size="md"
             >
             </q-icon>
-            <span class="text-h6 q-px-sm">{{ score(suggested) }}<q-tooltip>rating</q-tooltip></span>
+            <span class='text-h6 votes'>{{ score(suggested) }}<q-tooltip>rating</q-tooltip></span>
             <q-icon
               :color="disliked(suggested) ? 'red' : ''"
               @click="$emit('dislikeAction', suggested, disliked(suggested))"
@@ -139,3 +139,9 @@ export default {
   created () {}
 }
 </script>
+<style scoped>
+.votes {
+  width: 25px;
+  text-align: center;
+}
+</style>
