@@ -67,6 +67,16 @@ export default {
     return {}
   },
   computed: {
+    topSongs () {
+      const queue = Array.from(this.party.queue)
+      queue.sort((a, b) => this.score(b) - this.score(a))
+      if (this.party.queue.length === 1) {
+        return [queue[0]]
+      } else if (this.party.queue.length > 1) {
+        return queue.slice(0, 4)
+      }
+      return null
+    },
     songRequests () {
       const guest = this.findGuest
       return this.party.limitRequests ? (guest ? guest.allowedRequests - guest.amountRequested : null) : 'Unlimited'
@@ -78,6 +88,12 @@ export default {
     }
   },
   methods: {
+    score (song) {
+      return (
+        song.rating.filter(r => r.like).length -
+        song.rating.filter(r => !r.like).length
+      )
+    },
     likeSong (song, like) {
       this.$emit('likeSong', song, like)
     },
