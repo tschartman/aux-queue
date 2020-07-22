@@ -114,6 +114,7 @@ import {
   helpers
 } from 'vuelidate/lib/validators'
 import { TOKEN_AUTH_MUTATION } from 'src/graphql/queries/authQueries'
+import { USER_DATA_QUERY } from 'src/graphql/queries/userQueries'
 const alpha = helpers.regex('alpha', /^(?=.*\d)(?=.*[a-zA-Z]).{8,25}$/)
 const alerts = [
   {
@@ -262,8 +263,12 @@ export default {
           })
           if (loggedInUser.data) {
             await this.$apollo.getClient().resetStore()
+            const userData = await this.$apollo.query({
+              query: USER_DATA_QUERY
+            })
             await this.$store.dispatch('login', loggedInUser)
-            this.$router.push('/user')
+            await this.$store.dispatch('linkUser', userData.data.user)
+            this.$router.push('/me')
           } else {
             this.$router.push('/login')
             this.$q.notify(alerts[0])
