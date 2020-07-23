@@ -5,15 +5,20 @@
       <p v-else-if="findGuest && findGuest.status === 0" class="text-overline title">Pending</p>
       <q-btn v-else @click="$emit('joinParty')" flat color="primary">Join Party</q-btn>
     </div>
+    <h6 class="title">Top Requested Song</h6>
+    <div class="row justify-center items-center">
+      <q-img
+          :src="topSong.song.coverUri"
+          style="width: 150px"
+          :ratio="1"
+          basic
+          spinner-color="white"
+          class="rounded-borders"
+      />
+    </div>
     <div class="q-pa-md" v-if="findGuest && findGuest.status === 1">
       <searchContainer @selectSong="suggestSong" />
     </div>
-    <q-pull-to-refresh @refresh="pullRefreshSong">
-      <currentPlayback
-        :currentlyPlaying="party.currentlyPlaying"
-        :controller="false"
-      />
-    </q-pull-to-refresh>
     <q-scroll-area style="height: 300px;">
       <suggestedSongs
         v-if="party.queue.length > 0"
@@ -29,9 +34,8 @@
   </div>
 </template>
 <script>
-import { QScrollArea, QPullToRefresh } from 'quasar'
+import { QScrollArea } from 'quasar'
 import suggestedSongs from '../songs/suggestedSongs'
-import currentPlayback from '../playback/currentPlayback'
 import searchContainer from '../search/searchContainer'
 
 const alerts = [
@@ -54,10 +58,8 @@ const alerts = [
 export default {
   components: {
     suggestedSongs,
-    currentPlayback,
     QScrollArea,
-    searchContainer,
-    QPullToRefresh
+    searchContainer
   },
   props: {
     party: Object,
@@ -67,13 +69,11 @@ export default {
     return {}
   },
   computed: {
-    topSongs () {
+    topSong () {
       const queue = Array.from(this.party.queue)
       queue.sort((a, b) => this.score(b) - this.score(a))
-      if (this.party.queue.length === 1) {
-        return [queue[0]]
-      } else if (this.party.queue.length > 1) {
-        return queue.slice(0, 4)
+      if (this.party.queue.length > 0) {
+        return queue[0]
       }
       return null
     },
@@ -106,10 +106,6 @@ export default {
       } else {
         this.$q.notify(alerts[1])
       }
-    },
-    pullRefreshSong (done) {
-      this.$emit('refreshSong', this.party.host.userName, done)
-      done()
     }
   }
 }

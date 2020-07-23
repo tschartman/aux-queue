@@ -23,7 +23,7 @@
             <q-img
               class="cover"
               v-if="party.currentlyPlaying"
-              :src="party.currentlyPlaying.coverUri"
+              :src="topSong(party.queue).song.coverUri"
             >
             </q-img>
             <div v-else>
@@ -53,7 +53,22 @@ export default {
   data () {
     return {}
   },
-  methods: {}
+  computed: {
+
+  },
+  methods: {
+    topSong (partyQueue) {
+      const queue = Array.from(partyQueue)
+      queue.sort((a, b) => this.score(b) - this.score(a))
+      return queue[0]
+    },
+    score (song) {
+      return (
+        song.rating.filter(r => r.like).length -
+        song.rating.filter(r => !r.like).length
+      )
+    }
+  }
 }
 </script>
 <style scoped>

@@ -12,6 +12,22 @@ export const GET_PARTIES_QUERY = gql`
       host {
         userName
       }
+      queue {
+        id
+        song {
+          title
+          album
+          artist
+          coverUri
+          songUri
+        }
+        rating {
+          user {
+            userName
+          }
+          like
+        }
+      }
       guests {
         id
         status
@@ -33,6 +49,22 @@ export const PARTIES_UPDATED_SUBSCRIPTION = gql`
       }
       host {
         userName
+      }
+      queue {
+        id
+        song {
+          title
+          album
+          artist
+          coverUri
+          songUri
+        }
+        rating {
+          user {
+            userName
+          }
+          like
+        }
       }
       guests {
         id
