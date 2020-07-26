@@ -3,12 +3,18 @@
     <div v-if="party" class="row justify-center" q-ma-md>
       <q-btn @click="confirmShutDown" flat color="red">shut down party</q-btn>
     </div>
-    <q-pull-to-refresh @refresh="pullRefreshSong">
-      <currentPlayback
-        :currentlyPlaying="party.currentlyPlaying"
-        :controller="false"
+    <h6 class="title">Top Requested Song</h6>
+    <div class="row justify-center items-center">
+      <q-img
+          v-if="party.queue.length > 0"
+          :src="topSong.song.coverUri"
+          style="width: 150px"
+          :ratio="1"
+          basic
+          spinner-color="white"
+          class="rounded-borders"
       />
-    </q-pull-to-refresh>
+    </div>
     <q-tabs v-model="tab" narrow-indicator dense align="justify">
       <q-tab
         class="text-purple"
@@ -59,7 +65,6 @@
 import { spotifyApi } from 'src/utils/spotify-api'
 import {
   QScrollArea,
-  QPullToRefresh,
   QTabs,
   QTab,
   QTabPanel,
@@ -67,7 +72,6 @@ import {
   QSeparator
 } from 'quasar'
 import suggestedSongs from '../songs/suggestedSongs'
-import currentPlayback from '../playback/currentPlayback'
 import partyUsersList from '../users/partyUsersList'
 import { REMOVE_SONG_MUTATION } from 'src/graphql/queries/partyQueries'
 const alerts = [
@@ -80,10 +84,8 @@ const alerts = [
 export default {
   components: {
     suggestedSongs,
-    currentPlayback,
     partyUsersList,
     QScrollArea,
-    QPullToRefresh,
     QTabs,
     QTab,
     QTabPanel,
@@ -99,7 +101,23 @@ export default {
       tab: 'queue'
     }
   },
+  computed: {
+    topSong () {
+      const queue = Array.from(this.party.queue)
+      queue.sort((a, b) => this.score(b) - this.score(a))
+      if (this.party.queue.length > 0) {
+        return queue[0]
+      }
+      return null
+    }
+  },
   methods: {
+    score (song) {
+      return (
+        song.rating.filter(r => r.like).length -
+        song.rating.filter(r => !r.like).length
+      )
+    },
     async removeSong (song) {
       const removeSong = await this.$apollo.mutate({
         mutation: REMOVE_SONG_MUTATION,
@@ -139,3 +157,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.title {
+  margin: auto;
+  text-align: center;
+}
+</style>

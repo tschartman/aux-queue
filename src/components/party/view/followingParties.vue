@@ -20,14 +20,27 @@
            @click="$emit('switchTab', 'party', party.id)"
             bordered
           >
+          <div v-if="party.queue.length > 3" class="row">
+            <q-img
+              class="col-6"
+              ratio="1"
+              v-for="song in topSong(party.queue)"
+              :src="song.song.coverUri"
+              v-bind:key="song.song.coverUri"
+            />
+          </div>
             <q-img
               class="cover"
-              v-if="party.currentlyPlaying"
-              :src="topSong(party.queue).song.coverUri"
+              v-else-if="party.queue.length < 4 && party.queue.length > 0"
+              :src="topSong(party.queue)[0].song.coverUri"
             >
             </q-img>
             <div v-else>
-              <q-card-section class="row justify-center">
+              <q-card-section class="row justify-center icon">
+                <q-icon name="album" style="font-size:100px;" />
+              </q-card-section>
+              <q-card-section class="row justify-center text">
+                <div class="row justify-center text-subtitle1">No songs in Queue</div>
               </q-card-section>
             </div>
           </q-card>
@@ -58,9 +71,12 @@ export default {
   },
   methods: {
     topSong (partyQueue) {
+      if (partyQueue.length < 1) {
+        return []
+      }
       const queue = Array.from(partyQueue)
       queue.sort((a, b) => this.score(b) - this.score(a))
-      return queue[0]
+      return queue.length > 3 ? queue.slice(0, 4) : [queue[0]]
     },
     score (song) {
       return (
@@ -83,5 +99,12 @@ h6 {
   width: 200px;
   height: 200px;
   cursor: pointer;
+}
+.text {
+  padding-bottom: 0;
+}
+.icon {
+  padding-top: 30px;
+  padding-bottom: 0px;
 }
 </style>

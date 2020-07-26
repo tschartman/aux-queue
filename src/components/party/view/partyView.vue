@@ -6,7 +6,7 @@
       <q-btn v-else @click="$emit('joinParty')" flat color="primary">Join Party</q-btn>
     </div>
     <h6 class="title">Top Requested Song</h6>
-    <div class="row justify-center items-center">
+    <div v-if="party.queue.length > 0" class="row justify-center items-center">
       <q-img
           :src="topSong.song.coverUri"
           style="width: 150px"
