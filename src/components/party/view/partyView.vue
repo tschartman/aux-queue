@@ -3,6 +3,7 @@
     <div class="row justify-center">
       <p v-if="findGuest && findGuest.status === 1" class="text-overline title">Requests Remaining: {{ songRequests }}</p>
       <p v-else-if="findGuest && findGuest.status === 0" class="text-overline title">Pending</p>
+      <p v-else-if="findGuest && findGuest.status === 2" class="text-overline title blocked">Blocked</p>
       <q-btn v-else @click="$emit('joinParty')" flat color="primary">Join Party</q-btn>
     </div>
     <h6 class="title">Top Requested Song</h6>
@@ -114,5 +115,8 @@ export default {
 .title {
   margin: auto;
   text-align: center;
+}
+.blocked {
+  color: red;
 }
 </style>
