@@ -45,5 +45,10 @@ const link = split(
 export const apolloClient = new ApolloClient({
   link: link,
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'cache-and-network'
+    }
+  },
   connectToDevTools: true
 })

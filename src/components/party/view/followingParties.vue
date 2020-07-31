@@ -36,12 +36,12 @@
             >
             </q-img>
             <div v-else>
-              <q-card-section class="row justify-center icon">
+              <div class="row justify-center q-pt-lg">
                 <q-icon name="album" style="font-size:100px;" />
-              </q-card-section>
-              <q-card-section class="row justify-center text">
-                <div class="row justify-center text-subtitle1">No songs in Queue</div>
-              </q-card-section>
+              </div>
+              <div class="row justify-center">
+                <span class="text-subtitle1">No songs in Queue</span>
+              </div>
             </div>
           </q-card>
         </div>
@@ -50,14 +50,13 @@
   </div>
 </template>
 <script>
-import { QScrollArea, QCard, QImg, QCardSection } from 'quasar'
+import { QScrollArea, QCard, QImg } from 'quasar'
 
 export default {
   components: {
     QScrollArea,
     QCard,
-    QImg,
-    QCardSection
+    QImg
   },
   props: {
     parties: { type: Array },
@@ -99,12 +98,5 @@ h6 {
   width: 200px;
   height: 200px;
   cursor: pointer;
-}
-.text {
-  padding-bottom: 0;
-}
-.icon {
-  padding-top: 30px;
-  padding-bottom: 0px;
 }
 </style>
