@@ -3,12 +3,6 @@
     <div v-if="party" class="row justify-center" q-ma-md>
       <q-btn @click="confirmShutDown" flat color="red">shut down party</q-btn>
     </div>
-    <q-pull-to-refresh @refresh="pullRefreshSong">
-      <currentPlayback
-        :currentlyPlaying="party.currentlyPlaying"
-        :controller="false"
-      />
-    </q-pull-to-refresh>
     <q-tabs v-model="tab" narrow-indicator dense align="justify">
       <q-tab
         class="text-purple"
@@ -56,10 +50,8 @@
   </div>
 </template>
 <script>
-import { spotifyApi } from 'src/utils/spotify-api'
 import {
   QScrollArea,
-  QPullToRefresh,
   QTabs,
   QTab,
   QTabPanel,
@@ -67,7 +59,6 @@ import {
   QSeparator
 } from 'quasar'
 import suggestedSongs from '../songs/suggestedSongs'
-import currentPlayback from '../playback/currentPlayback'
 import partyUsersList from '../users/partyUsersList'
 import { REMOVE_SONG_MUTATION } from 'src/graphql/queries/partyQueries'
 const alerts = [
@@ -80,10 +71,8 @@ const alerts = [
 export default {
   components: {
     suggestedSongs,
-    currentPlayback,
     partyUsersList,
     QScrollArea,
-    QPullToRefresh,
     QTabs,
     QTab,
     QTabPanel,
@@ -127,14 +116,6 @@ export default {
           }
         ]
       })
-    },
-    playSong (song) {
-      this.removeSong(song)
-      spotifyApi.put('/me/player/play', { uris: [song.song.songUri] })
-    },
-    pullRefreshSong (done) {
-      this.$emit('refreshSong', this.party.host.userName, done)
-      done()
     }
   }
 }

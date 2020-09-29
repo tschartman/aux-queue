@@ -7,10 +7,7 @@ export const GET_FOLLOWERS_QUERY = gql`
       status
       follower {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
     }
   }
@@ -23,17 +20,11 @@ export const RELATIONSHIP_CREATED_SUBSCRIPTION = gql`
       status
       follower {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
       following {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
     }
   }
@@ -54,17 +45,11 @@ export const RELATIONSHIPS_UPDATED_SUBSCRIPTION = gql`
       status
       follower {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
       following {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
     }
   }
@@ -85,17 +70,11 @@ export const RELATIONSHIPS_DELETED_SUBSCRIPTION = gql`
       status
       follower {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
       following {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
     }
   }
@@ -108,10 +87,7 @@ export const GET_FOLLOWING_QUERY = gql`
       status
       following {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
     }
   }
@@ -123,17 +99,11 @@ export const GET_FOLLOW_QUERY = gql`
       status
       follower {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
       following {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
     }
   }
@@ -145,17 +115,11 @@ export const GET_FOLLOWER_QUERY = gql`
       status
       follower {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
       following {
         userName
-        firstName
-        lastName
         email
-        accessToken
       }
     }
   }
@@ -170,10 +134,7 @@ export const SEND_FOLLOW_MUTATION = gql`
         status
         following {
           userName
-          firstName
-          lastName
           email
-          accessToken
         }
       }
     }
@@ -189,10 +150,7 @@ export const UPDATE_FOLLOW_MUTATION = gql`
         status
         following {
           userName
-          firstName
-          lastName
           email
-          accessToken
         }
       }
     }
@@ -208,10 +166,7 @@ export const UPDATE_FOLLOWER_MUTATION = gql`
         status
         follower {
           userName
-          firstName
-          lastName
           email
-          accessToken
         }
       }
     }

@@ -124,8 +124,6 @@ export const PARTY_UPDATED_SUBSCRIPTION = gql`
         amountRequested
         user {
           userName
-          firstName
-          lastName
           userImage
         }
       }
@@ -171,8 +169,6 @@ export const GET_PARTY_QUERY = gql`
         amountRequested
         user {
           userName
-          firstName
-          lastName
           userImage
         }
       }
@@ -281,8 +277,6 @@ export const ALLOW_IN_PARTY_MUTATION = gql`
           amountRequested
           user {
             userName
-            firstName
-            lastName
             userImage
           }
         }
@@ -304,8 +298,6 @@ export const REMOVE_FROM_PARTY_MUTATION = gql`
           amountRequested
           user {
             userName
-            firstName
-            lastName
             userImage
           }
         }
@@ -349,8 +341,6 @@ export const JOIN_PARTY_MUTATION = gql`
           amountRequested
           user {
             userName
-            firstName
-            lastName
             userImage
           }
         }

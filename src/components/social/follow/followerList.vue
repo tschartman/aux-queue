@@ -17,7 +17,6 @@
         </q-item-section>
         <q-item-section @click="$emit('selectUser', follower.follower)">
           <q-item-label v-html="follower.follower.userName" />
-          <q-item-label caption>{{ follower.follower.firstName }}</q-item-label>
         </q-item-section>
         <q-item-section avatar>
           <div class="row">
@@ -60,9 +59,6 @@
       </q-item-section>
       <q-item-section>
         <q-item-label v-html="follower.follower.userName" />
-        <q-item-label caption
-          >{{ follower.follower.firstName }} {{ follower.follower.lastName }}</q-item-label
-        >
       </q-item-section>
     </q-item>
   </div>

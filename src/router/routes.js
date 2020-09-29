@@ -5,23 +5,8 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     meta: { requiresAuth: true },
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
-    ]
-  },
-  {
-    path: '/social',
-    component: () => import('layouts/MainLayout.vue'),
-    meta: { requiresAuth: true },
-    children: [
-      { path: '', component: () => import('pages/social/Social.vue') }
-    ]
-  },
-  {
-    path: '/me',
-    component: () => import('layouts/MainLayout.vue'),
-    meta: { requiresAuth: true },
-    children: [
-      { path: '', component: () => import('pages/auth/user.vue') }
+      { path: '', component: () => import('pages/Index.vue') },
+      { path: '/social', component: () => import('pages/social/Social.vue') }
     ]
   },
   {

@@ -17,12 +17,8 @@ const getDefaultState = () => {
     token: null,
     refresh: null,
     auth: false,
-    sauth: false,
-    spotify_token: null,
-    spotify_refresh: null,
     party: false,
-    user: {},
-    sUser: {}
+    user: {}
   }
 }
 
@@ -49,11 +45,6 @@ const Store = new Vuex.Store({
     auth_request (state) {
       state.status = 'loading'
     },
-    link_spotify (state, tokens) {
-      state.spotify_token = tokens.token
-      state.spotify_refresh = tokens.refresh
-      state.sauth = true
-    },
     auth_success (state, token) {
       state.status = 'success'
       state.auth = true
@@ -71,9 +62,6 @@ const Store = new Vuex.Store({
     set_user (state, user) {
       state.user = user
     },
-    set_spotify_user (state, user) {
-      state.sUser = user
-    },
     auth_error (state) {
       state.status = 'error'
     },
@@ -89,12 +77,6 @@ const Store = new Vuex.Store({
     linkUser ({ commit }, data) {
       commit('set_user', data)
     },
-    linkSpotify ({ commit }, data) {
-      commit('link_spotify', {
-        token: data.access_token,
-        refresh: data.refresh_token
-      })
-    },
     navigate ({ commit }, page) {
       commit('navigate', page)
     },
@@ -104,14 +86,8 @@ const Store = new Vuex.Store({
     shutDownParty ({ commit }) {
       commit('shut_down_party')
     },
-    linkSpotifyUser ({ commit }, data) {
-      commit('set_spotify_user', data)
-    },
     tempAuth ({ commit }) {
       commit('auth_success', null, null, null)
-    },
-    clearSpotify ({ commit }) {
-      commit('clear_spotify')
     },
     refresh ({ commit }, refresh) {
       return new Promise((resolve, reject) => {
@@ -142,13 +118,9 @@ const Store = new Vuex.Store({
   },
   getters: {
     isLoggedIn: state => state.auth,
-    isLinked: state => state.spotify_refresh,
     authStatus: state => state.status,
     token: state => state.token,
-    spotifyToken: state => state.spotify_token,
-    spotifyRefresh: state => state.spotify_refresh,
     user: state => state.user,
-    sUser: state => state.sUser,
     party: state => state.party,
     page: state => state.page
   }

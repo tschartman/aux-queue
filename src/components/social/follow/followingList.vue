@@ -13,9 +13,6 @@
       </q-item-section>
       <q-item-section>
         <q-item-label v-html="follow.following.userName" />
-        <q-item-label caption
-          >{{ follow.following.firstName }} {{ follow.following.lastName }}</q-item-label
-        >
       </q-item-section>
       <q-item-section avatar> </q-item-section>
     </q-item>

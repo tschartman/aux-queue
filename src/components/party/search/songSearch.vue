@@ -20,11 +20,11 @@
           v-close-popup
         >
           <q-item-section avatar>
-            <q-img :src="scope.opt.album.images[0].url" />
+            <q-img :src="scope.opt.album.cover" />
           </q-item-section>
           <q-item-section>
-            <q-item-label v-html="scope.opt.name" />
-            <q-item-label caption>{{ scope.opt.artists[0].name }}</q-item-label>
+            <q-item-label v-html="scope.opt.title" />
+            <q-item-label caption>{{ scope.opt.artist.name }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>

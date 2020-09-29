@@ -64,8 +64,7 @@ import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 import { USER_DATA_QUERY } from 'src/graphql/queries/userQueries'
 import {
-  TOKEN_AUTH_MUTATION,
-  SPOTIFY_REFRESH_MUTATION
+  TOKEN_AUTH_MUTATION
 } from 'src/graphql/queries/authQueries'
 import {
   QBtn,
@@ -139,21 +138,7 @@ export default {
             query: USER_DATA_QUERY
           })
           this.$store.dispatch('linkUser', userData.data.user)
-          const refreshed = await this.$apollo.mutate({
-            mutation: SPOTIFY_REFRESH_MUTATION
-          })
-          if (refreshed.data.refreshTokens.user.refreshToken) {
-            const data = {
-              access_token: refreshed.data.refreshTokens.user.accessToken,
-              refresh_token: refreshed.data.refreshTokens.user.refreshToken
-            }
-            this.$store.dispatch('linkSpotify', data)
-            const user = await this.$spotify.get('/me')
-            this.$store.dispatch('linkSpotifyUser', user.data)
-            this.$router.push('/')
-          } else {
-            this.$router.push('/')
-          }
+          this.$router.push('/')
         }
       }
     }

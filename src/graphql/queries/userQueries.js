@@ -4,8 +4,6 @@ export const USER_DATA_QUERY = gql`
   query getUser {
     user {
       email
-      firstName
-      lastName
       userName
     }
   }
@@ -13,16 +11,12 @@ export const USER_DATA_QUERY = gql`
 
 export const USER_CREATION_MUTATON = gql`
   mutation createUser(
-    $firstName: String!
-    $lastName: String!
     $userName: String!
     $email: String!
     $password: String!
   ) {
     createUser(
       input: {
-        firstName: $firstName
-        lastName: $lastName
         userName: $userName
         email: $email
         password: $password
@@ -35,17 +29,13 @@ export const USER_CREATION_MUTATON = gql`
 
 export const UPDATE_USER_MUTATION = gql`
   mutation updateUser(
-    $firstName: String!
-    $lastName: String!
     $email: String!
   ) {
     updateUser(
-      input: { firstName: $firstName, lastName: $lastName, email: $email }
+      input: { email: $email }
     ) {
       ok
       user {
-        firstName
-        lastName
         email
         userName
       }
@@ -83,7 +73,6 @@ export const GET_USERS_QUERY = gql`
   query getUsers {
     users {
       userName
-      firstName
       userImage
     }
   }

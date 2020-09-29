@@ -23,26 +23,6 @@
             <h5>User Info</h5>
             <q-input
               @keyup.enter="submit"
-              v-model="firstName"
-              :error-message="firstNameErrors[0]"
-              :error="firstNameErrors.length > 0"
-              label="First Name"
-              required
-              @input="$v.firstName.$touch()"
-              @blur="$v.firstName.$touch()"
-            ></q-input>
-            <q-input
-              @keyup.enter="submit"
-              v-model="lastName"
-              :error-message="lastNameErrors[0]"
-              :error="lastNameErrors.length > 0"
-              label="Last Name"
-              required
-              @input="$v.lastName.$touch()"
-              @blur="$v.lastName.$touch()"
-            ></q-input>
-            <q-input
-              @keyup.enter="submit"
               v-model="userName"
               :error-message="userNameErrors[0]"
               :error="userNameErrors.length > 0"
@@ -141,8 +121,6 @@ import {
 export default {
   mixins: [validationMixin],
   validations: {
-    firstName: { required },
-    lastName: { required },
     email: { required, email },
     userName: { required },
     password: {
@@ -170,8 +148,6 @@ export default {
   },
   data () {
     return {
-      firstName: '',
-      lastName: '',
       email: '',
       userName: '',
       unique: true,
@@ -194,18 +170,6 @@ export default {
       const errors = []
       if (!this.$v.checkbox.$dirty) return errors
       !this.$v.checkbox.checked && errors.push('You must agree to continue!')
-      return errors
-    },
-    firstNameErrors () {
-      const errors = []
-      if (!this.$v.firstName.$dirty) return errors
-      !this.$v.firstName.required && errors.push('First Name is required.')
-      return errors
-    },
-    lastNameErrors () {
-      const errors = []
-      if (!this.$v.lastName.$dirty) return errors
-      !this.$v.lastName.required && errors.push('Last Name is required.')
       return errors
     },
     emailErrors () {
@@ -246,8 +210,6 @@ export default {
       this.$v.$touch()
       if (!this.$v.$invalid) {
         const data = {
-          first_name: this.firstName,
-          last_name: this.lastName,
           user_name: this.userName,
           email: this.email.toLowerCase(),
           password: this.password
@@ -268,7 +230,7 @@ export default {
             })
             await this.$store.dispatch('login', loggedInUser)
             await this.$store.dispatch('linkUser', userData.data.user)
-            this.$router.push('/me')
+            this.$router.push('/')
           } else {
             this.$router.push('/login')
             this.$q.notify(alerts[0])

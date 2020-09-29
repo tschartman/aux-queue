@@ -17,7 +17,6 @@
         </q-item-section>
         <q-item-section>
           <q-item-label v-html="guest.user.userName" />
-          <q-item-label caption>{{ guest.user.firstName }}</q-item-label>
         </q-item-section>
         <q-item-section avatar>
           <div class="row">
@@ -57,9 +56,6 @@
       </q-item-section>
       <q-item-section>
         <q-item-label v-html="guest.user.userName" />
-        <q-item-label caption
-          >{{ guest.user.firstName }} {{ guest.user.lastName }}</q-item-label
-        >
       </q-item-section>
       <q-item-section avatar>
         <div class="text-subtitle2">

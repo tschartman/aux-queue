@@ -104,13 +104,14 @@ export default {
   },
   methods: {
     async suggestSong (song) {
+      console.log(song)
       const newSong = {
         id: this.party.id,
-        title: song.name,
-        artist: song.artists[0].name,
-        album: song.album.name,
-        coverUri: song.album.images[0].url,
-        songUri: song.uri
+        title: song.title,
+        artist: song.artist.name,
+        album: song.album.title,
+        coverUri: song.album.cover,
+        songUri: song.link
       }
       if (this.queue.findIndex(s => s.song.songUri === song.uri) === -1) {
         await this.$apollo.mutate({

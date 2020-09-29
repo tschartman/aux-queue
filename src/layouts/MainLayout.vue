@@ -17,16 +17,35 @@
             <img height="35px" width="140px" src='../statics/AuxQueue-logo.png' />
           </q-toolbar-title>
           <q-toggle v-model="value" />
-          <q-btn
-            flat
-            color="black"
-            v-if="!$store.getters.isLinked && $store.getters.isLoggedIn"
-            v-on:click="redirect()"
-            >link spotify</q-btn
-          >
+            <q-btn class="icon" color="grey-7" round flat icon="more_vert">
+            <q-menu cover auto-close>
+            <q-list>
+                <q-item
+                clickable
+                v-on:click="(modal = 'info'), (edit = true)"
+                >
+                <q-item-section>Edit Info</q-item-section>
+                </q-item>
+                <q-item
+                clickable
+                v-on:click="(modal = 'userName'), (edit = true)"
+                >
+                <q-item-section>Cange Username</q-item-section>
+                </q-item>
+                <q-item
+                clickable
+                v-on:click="
+                    edit = true;
+                    modal = 'password';
+                "
+                >
+                <q-item-section>Cange Password</q-item-section>
+                </q-item>
+            </q-list>
+            </q-menu>
+        </q-btn>
         </q-toolbar>
       </q-header>
-
       <q-drawer
         v-model="leftDrawerOpen"
         show-if-above
@@ -56,14 +75,6 @@
                 <q-item-label>Social</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item :active="$store.getters.page === 'me'" clickable v-on:click="navigate('me')">
-              <q-item-section avatar>
-                <q-icon name="person" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Profile</q-item-label>
-              </q-item-section>
-            </q-item>
             <q-separator />
             <q-item clickable v-on:click="logout">
               <q-item-section avatar>
@@ -86,11 +97,24 @@
           </div>
         </q-list>
       </q-drawer>
-      <div class="q-pa-md q-gutter-sm">
-        <q-dialog v-model="share">
-          <sharePlaylist />
-        </q-dialog>
-      </div>
+      <q-dialog v-model="edit">
+        <editUser
+        v-if="modal == 'info'"
+        :user="$store.getters.user"
+        @cancel="edit = false"
+        @success="userUpdated"
+        />
+        <editUserName
+        v-if="modal == 'userName'"
+        @cancel="edit = false"
+        @success="userNameUpdated"
+        />
+        <editPassword
+        v-if="modal == 'password'"
+        @cancel="edit = false"
+        @success="passwordUpdated"
+        />
+    </q-dialog>
       <q-page-container>
         <router-view />
       </q-page-container>
@@ -99,6 +123,9 @@
 </template>
 
 <script>
+import editUser from 'src/modals/editUser'
+import editUserName from 'src/modals/editUserName'
+import editPassword from 'src/modals/editPassword'
 import {
   openURL,
   QItemLabel,
@@ -107,6 +134,23 @@ import {
   QIcon,
   QSeparator
 } from 'quasar'
+const alerts = {
+  username: {
+    color: 'positive',
+    message: 'Username Updated Sucuessfully!',
+    icon: 'thumb_up'
+  },
+  password: {
+    color: 'positive',
+    message: 'Password Updated Sucuessfully!',
+    icon: 'thumb_up'
+  },
+  user: {
+    color: 'positive',
+    message: 'User Updated Sucuessfully!',
+    icon: 'thumb_up'
+  }
+}
 export default {
   name: 'AppBar',
   components: {
@@ -114,7 +158,10 @@ export default {
     QItem,
     QItemSection,
     QIcon,
-    QSeparator
+    QSeparator,
+    editUser,
+    editUserName,
+    editPassword
   },
   data () {
     return {
@@ -122,7 +169,9 @@ export default {
       playlists: [],
       model: null,
       share: false,
-      value: false
+      value: false,
+      modal: '',
+      edit: false
     }
   },
   watch: { value: function () { this.$q.dark.toggle() } },
@@ -143,8 +192,19 @@ export default {
         this.$router.push(page)
       }
     },
-    redirect () {
-      window.location = 'https://auxstack.herokuapp.com/spotify/'
+    userUpdated (user) {
+      this.edit = false
+      this.user = user
+      this.$q.notify(alerts.user)
+    },
+    userNameUpdated (userName) {
+      this.edit = false
+      this.user.userName = userName
+      this.$q.notify(alerts.username)
+    },
+    passwordUpdated () {
+      this.edit = false
+      this.$q.notify(alerts.password)
     }
   },
   created () {}

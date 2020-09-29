@@ -6,7 +6,8 @@
   />
 </template>
 <script>
-import { spotifyApi } from 'src/utils/spotify-api'
+import { appApi } from 'src/utils/app-api'
+
 import songSearch from './songSearch'
 export default {
   name: 'searchContainer',
@@ -22,15 +23,17 @@ export default {
     }
   },
   methods: {
-    filterFn (val, update, abort) {
+    async filterFn (val, update, abort) {
       if (val.length < 1) {
         abort()
         return
       }
-      update(() => {
-        spotifyApi
-          .get('/search?q=' + val + '&type=track')
-          .then(res => (this.options = res.data.tracks.items))
+      update(async () => {
+        const res = await appApi.get('/search/', {
+          params: { track: val }
+        })
+        this.options = res.data.data
+        console.log(res.data.data)
       })
     },
     selectSong (song) {

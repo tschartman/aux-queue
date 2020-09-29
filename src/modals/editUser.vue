@@ -3,27 +3,7 @@
     <q-card class="screen">
       <q-card-section>
         <form>
-          <h5>User Info</h5>
-          <q-input
-            @keyup.enter="submit"
-            v-model="firstName"
-            :error-message="firstNameErrors[0]"
-            :error="firstNameErrors.length > 0"
-            label="First Name"
-            required
-            @input="$v.firstName.$touch()"
-            @blur="$v.firstName.$touch()"
-          ></q-input>
-          <q-input
-            @keyup.enter="submit"
-            v-model="lastName"
-            :error-message="lastNameErrors[0]"
-            :error="lastNameErrors.length > 0"
-            label="Last Name"
-            required
-            @input="$v.lastName.$touch()"
-            @blur="$v.lastName.$touch()"
-          ></q-input>
+          <h5>Email</h5>
           <q-input
             @keyup.enter="submit"
             v-model="email"
@@ -55,8 +35,6 @@ export default {
   },
   mixins: [validationMixin],
   validations: {
-    firstName: { required },
-    lastName: { required },
     email: { required, email }
   },
   components: {
@@ -68,24 +46,10 @@ export default {
   },
   data () {
     return {
-      firstName: '',
-      lastName: '',
       email: ''
     }
   },
   computed: {
-    firstNameErrors () {
-      const errors = []
-      if (!this.$v.firstName.$dirty) return errors
-      !this.$v.firstName.required && errors.push('First Name is required.')
-      return errors
-    },
-    lastNameErrors () {
-      const errors = []
-      if (!this.$v.lastName.$dirty) return errors
-      !this.$v.lastName.required && errors.push('Last Name is required.')
-      return errors
-    },
     emailErrors () {
       const errors = []
       if (!this.$v.email.$dirty) return errors
@@ -98,8 +62,6 @@ export default {
     async submit () {
       if (!this.$v.$invalid) {
         const data = {
-          firstName: this.firstName,
-          lastName: this.lastName,
           email: this.email
         }
         const updateUser = await this.$apollo.mutate({
@@ -114,8 +76,6 @@ export default {
     }
   },
   created () {
-    this.firstName = this.user.firstName
-    this.lastName = this.user.lastName
     this.email = this.user.email
   }
 }

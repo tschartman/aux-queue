@@ -26,7 +26,6 @@
           </q-item-section>
           <q-item-section>
             <q-item-label v-html="scope.opt.userName" />
-            <q-item-label caption>{{ scope.opt.firstName }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>
