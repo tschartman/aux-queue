@@ -31,7 +31,7 @@
               class="clickable"
               :color="liked(suggested) ? 'blue' : ''"
               @click="$emit('likeAction', suggested, liked(suggested))"
-              name="arrow_upward"
+              name="thumb_up"
               size="md"
             >
             </q-icon>
@@ -40,7 +40,7 @@
               class="clickable"
               :color="disliked(suggested) ? 'red' : ''"
               @click="$emit('dislikeAction', suggested, disliked(suggested))"
-              name="arrow_downward"
+              name="thumb_down"
               size="md"
             >
             </q-icon>
@@ -52,20 +52,11 @@
           <q-icon
             class="clickable"
             @click="$emit('removeAction', suggested)"
-            name="delete"
+            name="remove_circle_outline"
             color="red"
             size="md"
           >
           <q-tooltip>Remove</q-tooltip>
-          </q-icon>
-          <q-icon
-            class="clickable"
-            @click="$emit('playAction', suggested)"
-            name="play_arrow"
-            color="blue"
-            size="md"
-          >
-            <q-tooltip>Play Now</q-tooltip>
           </q-icon>
           </div>
         </q-item-section>

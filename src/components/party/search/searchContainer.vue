@@ -33,7 +33,6 @@ export default {
           params: { track: val }
         })
         this.options = res.data.data
-        console.log(res.data.data)
       })
     },
     selectSong (song) {

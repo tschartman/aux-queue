@@ -87,7 +87,7 @@
       </q-item>
     </q-expansion-item>
     <q-item v-for="guest in accepted" :key="guest.user.userName">
-      <q-item-section avatar>
+      <q-item-section class="clickable" @click="showUser(guest.user)" avatar>
         <q-avatar>
           <q-img
             :src="guest.user.userImage || 'https://www.gravatar.com/avatar/'"
@@ -139,6 +139,7 @@
   </div>
 </template>
 <script>
+import showUser from 'src/modals/showUser'
 import { QImg, QAvatar, QTooltip, QPopupEdit, QInput, QExpansionItem } from 'quasar'
 import {
   UPDATE_ALLOWED_REQUEST,
@@ -187,6 +188,13 @@ export default {
           icon: 'report_problem'
         })
       }
+    },
+    showUser (user) {
+      this.$q.dialog({
+        component: showUser,
+        parent: this,
+        user: user
+      })
     },
     kickUser (username, id) {
       this.$q.notify({

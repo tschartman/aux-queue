@@ -39,7 +39,6 @@
             :host="true"
             :songs="party.queue"
             @removeAction="removeSong"
-            @playAction="playSong"
           />
           <div v-else class="row justify-center text-body1">
             No suggested Songs. Invite more people to your party so that can

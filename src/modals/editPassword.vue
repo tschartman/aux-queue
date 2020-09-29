@@ -39,7 +39,7 @@
         <p class="authError" v-if="authError">{{ authError }}</p>
       </q-card-section>
       <q-card-actions align="around">
-        <q-btn flat @click="cancel" color="dark">cancel</q-btn>
+        <q-btn flat @click="cancel" color="red">cancel</q-btn>
         <q-btn flat class="mr-4" @click="submit" color="primary">submit</q-btn>
       </q-card-actions>
     </q-card>
@@ -160,6 +160,7 @@ h5 {
 .screen {
   padding: 1em;
   flex: 1;
+  min-width: 450px;
   max-width: 700px;
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <div v-if="user" class="row justify-center" q-ma-md>
+      <div v-if="user" class="row justify-center q-ma-lg" q-ma-md>
         <follow
           v-if="following"
           :status="following.status"

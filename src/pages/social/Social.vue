@@ -1,7 +1,7 @@
 <template>
   <div>
-    <searchUsers @selectUser="selectUser" />
-    <Friends v-if="user" :user="user" />
+    <Friends v-if="user" :user="user"/>
+    <searchUsers class="q-ma-lg"  @selectUser="selectUser" />
     <FollowTabs @selectUser="selectUser" />
   </div>
 </template>

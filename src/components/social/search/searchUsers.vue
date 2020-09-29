@@ -4,11 +4,11 @@
       rounded
       outlined
       v-model="model"
-      label="Search Users"
+      label="Search"
       use-input
       hide-selected
       input-debounce="0"
-      :options="options"
+      :options="filteredOptions"
       @filter="filterFn"
     >
       <template v-slot:option="scope">
@@ -49,7 +49,9 @@ export default {
   },
   data () {
     return {
-      model: null
+      model: null,
+      options: [],
+      filteredOptions: []
     }
   },
   apollo: {
@@ -66,7 +68,7 @@ export default {
       }
       update(() => {
         const needle = val.toLowerCase()
-        this.filterOptions = this.options.filter(
+        this.filteredOptions = this.options.filter(
           v => v.userName.toLowerCase().indexOf(needle) > -1
         )
       })
