@@ -20,15 +20,28 @@
            @click="$emit('switchTab', 'party', party.id)"
             bordered
           >
+          <div v-if="party.queue.length > 3" class="row">
+            <q-img
+              class="col-6"
+              ratio="1"
+              v-for="song in topSong(party.queue)"
+              :src="song.song.coverUri"
+              v-bind:key="song.song.coverUri"
+            />
+          </div>
             <q-img
               class="cover"
-              v-if="party.currentlyPlaying"
-              :src="topSong(party.queue).song.coverUri"
+              v-else-if="party.queue.length < 4 && party.queue.length > 0"
+              :src="topSong(party.queue)[0].song.coverUri"
             >
             </q-img>
             <div v-else>
-              <q-card-section class="row justify-center">
-              </q-card-section>
+              <div class="row justify-center q-pt-lg">
+                <q-icon name="album" style="font-size:100px;" />
+              </div>
+              <div class="row justify-center">
+                <span class="text-subtitle1">No songs in Queue</span>
+              </div>
             </div>
           </q-card>
         </div>
@@ -37,14 +50,13 @@
   </div>
 </template>
 <script>
-import { QScrollArea, QCard, QImg, QCardSection } from 'quasar'
+import { QScrollArea, QCard, QImg } from 'quasar'
 
 export default {
   components: {
     QScrollArea,
     QCard,
-    QImg,
-    QCardSection
+    QImg
   },
   props: {
     parties: { type: Array },
@@ -58,9 +70,12 @@ export default {
   },
   methods: {
     topSong (partyQueue) {
+      if (partyQueue.length < 1) {
+        return []
+      }
       const queue = Array.from(partyQueue)
       queue.sort((a, b) => this.score(b) - this.score(a))
-      return queue[0]
+      return queue.length > 3 ? queue.slice(0, 4) : [queue[0]]
     },
     score (song) {
       return (

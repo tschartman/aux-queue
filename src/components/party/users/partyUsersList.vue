@@ -1,13 +1,49 @@
 <template>
   <div v-if="guests">
+    <q-expansion-item
+      expand-separator
+      icon="remove_circle"
+      label="Blocked"
+      :caption="String(blocked.length)"
+    >
+      <q-item v-for="guest in blocked" :key="guest.id">
+        <q-item-section avatar>
+          <q-avatar>
+            <q-img
+              :src="guest.user.userImage || 'https://www.gravatar.com/avatar/'"
+            />
+          </q-avatar>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label v-html="guest.user.userName" />
+          <q-item-label caption>{{ guest.user.firstName }}</q-item-label>
+        </q-item-section>
+        <q-item-section avatar>
+          <div class="row">
+            <div class="q-mx-md">
+              <q-icon
+                class="clickable"
+                size="md"
+                name="report_off"
+                color="green"
+                @click="allowInParty(guest.id)"
+              >
+                <q-tooltip>
+                  Unblock
+                </q-tooltip>
+              </q-icon>
+            </div>
+          </div>
+        </q-item-section>
+      </q-item>
+    </q-expansion-item>
       <q-expansion-item
       expand-separator
       icon="perm_identity"
-      label="Requested"
+      label="Requesting"
       :caption="String(requested.length)"
-      default-opened
     >
-      <q-item v-for="guest in requested" :key="guest.id" clickable>
+      <q-item v-for="guest in requested" :key="guest.id">
         <q-item-section avatar>
           <q-avatar>
             <q-img
@@ -22,8 +58,10 @@
           <div class="row">
             <div class="q-mx-md">
               <q-icon
+                class="clickable"
                 size="md"
                 name="clear"
+                color="red"
                 @click="sendRemoveRequest(guest.id)"
               >
                 <q-tooltip>
@@ -33,8 +71,10 @@
             </div>
             <div class="q-mx-md">
               <q-icon
+                class="clickable"
                 size="md"
                 name="done"
+                color="green"
                 @click="allowInParty(guest.id)"
               >
                 <q-tooltip>
@@ -84,8 +124,9 @@
       </q-item-section>
       <q-item-section avatar>
         <q-icon
+          class="clickable"
           size="sm"
-          name="pan_tool"
+          name="block"
           @click="kickUser(guest.user.userName, guest.id)"
           color="red"
         >
@@ -128,6 +169,9 @@ export default {
     },
     requested () {
       return this.guests.filter(guest => guest.status === 0)
+    },
+    blocked () {
+      return this.guests.filter(guest => guest.status === 2)
     }
   },
   methods: {

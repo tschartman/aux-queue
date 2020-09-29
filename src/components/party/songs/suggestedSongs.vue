@@ -28,6 +28,7 @@
         <q-item-section v-if="!host" top side>
           <div class="q-gutter-sm flex">
             <q-icon
+              class="clickable"
               :color="liked(suggested) ? 'blue' : ''"
               @click="$emit('likeAction', suggested, liked(suggested))"
               name="arrow_upward"
@@ -36,6 +37,7 @@
             </q-icon>
             <span class='text-h6 votes'>{{ score(suggested) }}<q-tooltip>rating</q-tooltip></span>
             <q-icon
+              class="clickable"
               :color="disliked(suggested) ? 'red' : ''"
               @click="$emit('dislikeAction', suggested, disliked(suggested))"
               name="arrow_downward"
@@ -44,23 +46,28 @@
             </q-icon>
           </div>
         </q-item-section>
-        <q-item-section v-if="host" avatar>
+        <q-item-section v-else top side>
+          <div class="q-gutter-sm flex">
+          <span class='text-h6 votes'>{{ score(suggested) }}<q-tooltip>rating</q-tooltip></span>
           <q-icon
+            class="clickable"
             @click="$emit('removeAction', suggested)"
             name="delete"
             color="red"
+            size="md"
           >
-            <q-tooltip>Remove</q-tooltip>
+          <q-tooltip>Remove</q-tooltip>
           </q-icon>
-        </q-item-section>
-        <q-item-section v-if="host" avatar>
           <q-icon
+            class="clickable"
             @click="$emit('playAction', suggested)"
-            name="playlist_add"
+            name="play_arrow"
             color="blue"
+            size="md"
           >
-            <q-tooltip>Add To Plalist</q-tooltip>
+            <q-tooltip>Play Now</q-tooltip>
           </q-icon>
+          </div>
         </q-item-section>
       </q-item>
     </q-intersection>

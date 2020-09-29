@@ -3,6 +3,18 @@
     <div v-if="party" class="row justify-center" q-ma-md>
       <q-btn @click="confirmShutDown" flat color="red">shut down party</q-btn>
     </div>
+    <h6 class="title">Top Requested Song</h6>
+    <div class="row justify-center items-center">
+      <q-img
+          v-if="party.queue.length > 0"
+          :src="topSong.song.coverUri"
+          style="width: 150px"
+          :ratio="1"
+          basic
+          spinner-color="white"
+          class="rounded-borders"
+      />
+    </div>
     <q-tabs v-model="tab" narrow-indicator dense align="justify">
       <q-tab
         class="text-purple"
@@ -88,7 +100,23 @@ export default {
       tab: 'queue'
     }
   },
+  computed: {
+    topSong () {
+      const queue = Array.from(this.party.queue)
+      queue.sort((a, b) => this.score(b) - this.score(a))
+      if (this.party.queue.length > 0) {
+        return queue[0]
+      }
+      return null
+    }
+  },
   methods: {
+    score (song) {
+      return (
+        song.rating.filter(r => r.like).length -
+        song.rating.filter(r => !r.like).length
+      )
+    },
     async removeSong (song) {
       const removeSong = await this.$apollo.mutate({
         mutation: REMOVE_SONG_MUTATION,
@@ -120,3 +148,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.title {
+  margin: auto;
+  text-align: center;
+}
+</style>
