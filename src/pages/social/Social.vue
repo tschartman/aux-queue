@@ -11,6 +11,9 @@ import FollowTabs from 'src/components/social/follow/FollowTabs'
 import searchUsers from 'src/components/social/search/searchUsers'
 
 export default {
+  props: {
+    passedUser: { type: Object }
+  },
   components: {
     Friends,
     FollowTabs,
@@ -24,6 +27,11 @@ export default {
   methods: {
     selectUser (user) {
       this.$set(this, 'user', user)
+    }
+  },
+  created () {
+    if (this.passedUser) {
+      this.user = this.passedUser
     }
   }
 }

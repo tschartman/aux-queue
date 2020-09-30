@@ -23,14 +23,15 @@ export default {
     }
   },
   methods: {
-    async filterFn (val, update, abort) {
+    async filterFn (val, update, abort, artist) {
       if (val.length < 1) {
         abort()
         return
       }
       update(async () => {
+        const params = artist ? { track: val, artist: artist } : { track: val }
         const res = await appApi.get('/search/', {
-          params: { track: val }
+          params: params
         })
         this.options = res.data.data
       })

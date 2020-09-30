@@ -6,7 +6,14 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: '', component: () => import('pages/Index.vue') },
-      { path: '/social', component: () => import('pages/social/Social.vue') }
+      {
+        path: '/social',
+        name: 'social',
+        component: () => import('pages/social/Social.vue'),
+        props: (route) => ({
+          ...route.params
+        })
+      }
     ]
   },
   {

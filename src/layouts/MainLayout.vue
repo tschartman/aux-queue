@@ -182,7 +182,7 @@ export default {
       this.$router.push('/login')
     },
     navigate (page) {
-      if (this.page === page) {
+      if (this.$store.getters.page === page) {
         this.leftDrawerOpen = false
       } else if (page === 'home') {
         this.$store.dispatch('navigate', 'home')

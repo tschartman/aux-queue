@@ -139,7 +139,6 @@
   </div>
 </template>
 <script>
-import showUser from 'src/modals/showUser'
 import { QImg, QAvatar, QTooltip, QPopupEdit, QInput, QExpansionItem } from 'quasar'
 import {
   UPDATE_ALLOWED_REQUEST,
@@ -190,10 +189,12 @@ export default {
       }
     },
     showUser (user) {
-      this.$q.dialog({
-        component: showUser,
-        parent: this,
-        user: user
+      this.$store.dispatch('navigate', 'social')
+      this.$router.push({
+        name: 'social',
+        params: {
+          passedUser: user
+        }
       })
     },
     kickUser (username, id) {
